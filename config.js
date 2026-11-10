@@ -11,5 +11,5 @@
  *    và CHOTHU2026 (đang chờ hồi đáp).
  */
 window.CAU_HINH = {
-  APPS_SCRIPT_URL: ""
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzkjjh09zossSvd0Vpbc6YZWPzRylZ4SgUsRrJLXP0eGbivxKTdYc0BaOUAu77YzdVY/exec"
 };
