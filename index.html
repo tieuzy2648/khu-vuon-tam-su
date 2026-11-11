@@ -33,6 +33,7 @@
   color-scheme:light;
 }
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 body{margin:0;background:var(--kem);color:var(--chu);font-family:var(--f-noi-dung);font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
@@ -141,13 +142,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .giay-ghim .tag{font-size:.72rem;font-weight:600;background:var(--be);border-radius:999px;padding:1px 8px}
 .trang-thai-bang{grid-column:1/-1;text-align:center;padding:36px 16px;border:1.5px dashed var(--vien);border-radius:var(--bo);display:flex;flex-direction:column;align-items:center;gap:12px}
 
-/* 4. Hòm thư */
-.vung-hom-thu{padding-block:24px 96px}
-.hop-hom-thu{background:var(--sage-nhat);border-radius:28px;padding:64px;display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:center}
-.hop-hom-thu > *{min-width:0}
-.hop-hom-thu .chu{display:flex;flex-direction:column;gap:18px}
-.hop-hom-thu .hang-nut{margin-top:10px}
-
 /* 5. Tra cứu */
 .tra-cuu .khung{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:center}
 .tra-cuu .khung > *{min-width:0}
@@ -165,7 +159,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .truong{display:flex;flex-direction:column;gap:8px;border:0;margin:0;padding:0;min-width:0}
 .truong > label,.truong legend{font-weight:600;color:var(--la-dam);font-size:.98rem;padding:0}
 .truong .phu{font-weight:400;color:var(--chu);font-size:.85rem}
-input[type=text],input[type=email],textarea{width:100%;font:1rem/1.5 var(--f-noi-dung);color:var(--chu);background:var(--kem);border:1.5px solid var(--vien);border-radius:12px;padding:12px 14px;transition:border-color .2s,background .2s}
+input[type=text],input[type=email],input[type=password],textarea{width:100%;font:1rem/1.5 var(--f-noi-dung);color:var(--chu);background:var(--kem);border:1.5px solid var(--vien);border-radius:12px;padding:12px 14px;transition:border-color .2s,background .2s}
 textarea{min-height:170px;resize:vertical}
 input:focus,textarea:focus{outline:none;border-color:var(--la-dam);background:var(--giay)}
 input[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:var(--loi)}
@@ -227,14 +221,215 @@ dialog[open]{animation:hien .25s ease-out}
 .chinh-sach ul{margin:0;padding-left:20px}
 .trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 
+/* ================= MÀU TƯƠI & CHUYỂN ĐỘNG ================= */
+:root{
+  --hong:#FF8FB1;--hong-dam:#C93F6E;--hong-nhat:#FFE6EE;
+  --vang:#FFD45C;--vang-nhat:#FFF5D6;--chu-vang:#5B3B00;
+  --troi:#BFE6FF;--tim:#B9A7FF;--tim-nhat:#EEE9FF;--cam:#FF9F7F;
+}
+body{overflow-x:clip}
+.nut:active{transform:scale(.97)}
+@media (hover:hover){
+  .nut-chinh:hover,.nut-phu:hover{transform:translateY(-2px)}
+  .the-cam-xuc:hover svg{animation:nhun .7s ease}
+  .giay-ghim:hover{transform:rotate(0) translateY(-5px) scale(1.02);box-shadow:0 20px 30px -22px var(--la-dam);z-index:1}
+}
+.giay-ghim{transition:transform .3s cubic-bezier(.3,1.6,.5,1),box-shadow .3s}
+.the-cam-xuc[aria-pressed="true"] svg{animation:nhun .7s ease}
+@keyframes nhun{0%,100%{transform:none}30%{transform:translateY(-8px) rotate(-6deg)}60%{transform:translateY(0) rotate(4deg)}80%{transform:translateY(-3px)}}
+@keyframes xoay{to{transform:rotate(360deg)}}
+@keyframes bap-benh{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes dung-dua{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+/* Xuất hiện dần khi cuộn tới (chỉ bật khi người dùng không tắt chuyển động) */
+.hien-dan{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.hien-dan.da-hien{opacity:1;transform:none}
+
+/* Cánh hoa rơi ở phần chào mừng */
+.chao{position:relative;overflow:hidden}
+.canh-hoa-roi{position:absolute;inset:0;pointer-events:none;z-index:0}
+.chao .khung{position:relative;z-index:1}
+.canh-hoa-roi i{position:absolute;top:-30px;width:14px;height:14px;border-radius:70% 0 70% 0;opacity:.75;animation:roi linear infinite}
+@keyframes roi{0%{transform:translate(0,-20px) rotate(0)}100%{transform:translate(var(--troi-x,60px),110vh) rotate(540deg)}}
+.minh-hoa .lac-lu{transform-box:fill-box;transform-origin:50% 100%;animation:dung-dua 4s ease-in-out infinite}
+.minh-hoa .lac-lu.cham{animation-duration:5.2s;animation-delay:-1.4s}
+.minh-hoa .phong-bi{animation:bap-benh 4.5s ease-in-out infinite}
+
+/* Lời nhắn hôm nay */
+.giay-nhan.lat{animation:lat-giay .6s ease}
+@keyframes lat-giay{0%{transform:none}35%{transform:rotate(-2.5deg) translateY(-6px)}70%{transform:rotate(1.5deg)}100%{transform:none}}
+.nhan-hom-nay{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--hong-dam)}
+.nhan-hom-nay::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--hong);animation:nay 1.8s ease-in-out infinite}
+
+/* Thanh trên: nút thông báo và tài khoản */
+.cum-phai{display:flex;align-items:center;gap:8px;flex:none}
+.nut-icon{position:relative;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--vien);background:var(--giay);display:grid;place-items:center;cursor:pointer;color:var(--la-dam);padding:0;transition:transform .2s,border-color .2s}
+.nut-icon:hover{border-color:var(--sage);transform:translateY(-1px)}
+.nut-icon svg{width:22px;height:22px}
+.huy-hieu{position:absolute;top:-5px;right:-5px;min-width:21px;height:21px;padding:0 5px;border-radius:999px;background:var(--hong-dam);color:#fff;font:700 .72rem/21px var(--f-noi-dung);text-align:center;box-shadow:0 0 0 2px var(--kem);animation:nay 1.8s ease-in-out infinite}
+@keyframes nay{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.nut-tai-khoan{display:inline-flex;align-items:center;gap:8px;max-width:210px;height:44px;background:var(--giay);border:1.5px solid var(--vien);border-radius:999px;padding:4px 14px 4px 4px;color:var(--la-dam);font:600 .9rem var(--f-noi-dung);cursor:pointer}
+.nut-tai-khoan:hover{border-color:var(--sage)}
+.nut-tai-khoan .ten{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.anh-dai-dien{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--sage-nhat);color:#fff;font:600 1rem var(--f-tieu-de)}
+.anh-dai-dien svg{width:22px;height:22px}
+.anh-dai-dien.lon{width:64px;height:64px;font-size:1.7rem}
+.nut-menu svg{width:22px;height:22px;display:block}
+.bang-thong-bao{position:absolute;top:calc(100% + 6px);right:max(16px,env(safe-area-inset-right,0px));width:min(340px,calc(100vw - 32px));background:var(--giay);border:1px solid var(--vien);border-radius:18px;box-shadow:0 24px 60px -24px rgba(62,58,50,.45);padding:18px;display:flex;flex-direction:column;gap:14px;z-index:40;animation:hien .2s ease-out}
+.bang-thong-bao[hidden]{display:none}
+.bang-thong-bao h3{font-size:1.1rem}
+.o-so{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.o-so > div{background:var(--sage-nhat);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.o-so > div:nth-child(2){background:var(--hong-nhat)}
+.o-so b{font:600 1.7rem/1.1 var(--f-tieu-de);color:var(--la-dam)}
+.o-so > div:nth-child(2) b{color:var(--hong-dam)}
+.o-so span{font-size:.82rem}
+.dong-moi{font-size:.9rem;background:var(--vang-nhat);border-radius:12px;padding:10px 12px;color:var(--chu-vang)}
+
+/* Khu vườn của bạn: hòm thư */
+.vung-vuon{padding-block:24px 96px}
+.hop-vuon{position:relative;border-radius:32px;overflow:hidden;background:linear-gradient(180deg,#9AD6FF 0%,#D2EFFF 48%,#FFF1D6 100%);box-shadow:0 30px 70px -40px rgba(40,90,120,.6)}
+.vuon-chu{position:relative;z-index:2;text-align:center;padding:52px 24px 0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.vuon-chu .nhan-nho{color:#215C78;opacity:1}
+.vuon-chu h2{color:#1F4A63}
+.vuon-chu p{color:#33505F;max-width:60ch}
+.canh-vuon{display:block;width:100%;height:auto;aspect-ratio:1000/430;margin-top:-6px}
+.dieu-khien-vuon{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 20px 36px;margin-top:-6px;background:#5DBE6E}
+.dieu-khien-vuon .hang-nut{justify-content:center}
+.nut-vuon{min-width:176px;font-size:1.06rem;padding:15px 28px;border-radius:999px;box-shadow:0 6px 0 rgba(0,0,0,.16)}
+.nut-vuon svg{width:22px;height:22px}
+.nut-vuon:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
+.nut-lay{background:var(--vang);color:var(--chu-vang)}
+.nut-lay:hover{background:#FFC93A}
+.nut-cat{background:var(--hong-dam);color:#fff}
+.nut-cat:hover{background:#B5325F}
+.trang-thai-vuon{font-size:.92rem;color:#fff;background:rgba(20,70,40,.32);padding:6px 16px;border-radius:999px;text-align:center}
+.trang-thai-vuon button{color:#fff;text-decoration-color:var(--vang);font-size:.92rem;padding:0}
+.lien-ket-phu{font-size:.88rem;color:#fff}
+.lien-ket-phu .nut-chu{color:#fff;text-decoration-color:rgba(255,255,255,.6);font-size:.88rem}
+
+.canh-vuon .may{animation:troi-may 46s linear infinite}
+.canh-vuon .may.m2{animation-duration:64s;animation-delay:-30s}
+.canh-vuon .may.m3{animation-duration:80s;animation-delay:-55s}
+@keyframes troi-may{from{transform:translateX(-300px)}to{transform:translateX(1150px)}}
+.canh-vuon .tia-nang{transform-box:fill-box;transform-origin:center;animation:xoay 40s linear infinite}
+.canh-vuon .hoa{transform-box:fill-box;transform-origin:50% 100%;animation:dung-dua 3.8s ease-in-out infinite;animation-delay:var(--tre,0s)}
+.canh-vuon .buom{animation:bay-buom 16s ease-in-out infinite;animation-delay:var(--tre,0s)}
+.canh-vuon .canh-buom{transform-box:fill-box;transform-origin:50% 50%;animation:vo-canh .22s ease-in-out infinite alternate}
+@keyframes vo-canh{to{transform:scaleX(.25)}}
+@keyframes bay-buom{0%,100%{transform:translate(0,0)}25%{transform:translate(120px,-50px)}50%{transform:translate(220px,10px)}75%{transform:translate(90px,40px)}}
+.canh-vuon .ong{animation:bay-ong 9s ease-in-out infinite}
+@keyframes bay-ong{0%,100%{transform:translate(0,0)}50%{transform:translate(-140px,-24px)}}
+.canh-vuon .hom{transform-box:fill-box;transform-origin:50% 100%}
+.hop-vuon.lac .hom{animation:lac-hom .55s ease}
+@keyframes lac-hom{0%,100%{transform:none}25%{transform:rotate(-3deg)}50%{transform:rotate(2.5deg)}75%{transform:rotate(-1deg)}}
+.canh-vuon .cua-hom{transform-box:view-box;transform-origin:418px 0;transition:transform .55s cubic-bezier(.4,1.5,.5,1)}
+.hop-vuon.mo-cua .cua-hom{transform:scaleX(-.28)}
+.canh-vuon .co-hom{transform-box:view-box;transform-origin:604px 282px;transform:rotate(90deg);transition:transform .7s cubic-bezier(.4,1.8,.5,1)}
+.hop-vuon.co-thu-moi .co-hom{transform:rotate(0)}
+.canh-vuon .bong-bao{opacity:0;transition:opacity .4s}
+.hop-vuon.co-thu-moi .bong-bao{opacity:1}
+.hop-vuon.co-thu-moi .bong-bao g{animation:bap-benh 2.4s ease-in-out infinite}
+.canh-vuon .thu-trong{opacity:0;transition:opacity .3s}
+.hop-vuon[data-so-thu="1"] .t1,.hop-vuon[data-so-thu="2"] .t1,.hop-vuon[data-so-thu="2"] .t2,.hop-vuon[data-so-thu="3"] .thu-trong{opacity:1}
+.canh-vuon .thu-bay{opacity:0;transform-box:fill-box;transform-origin:center}
+.hop-vuon.dang-cat .thu-bay-vao{animation:bay-vao 1.25s cubic-bezier(.45,.05,.55,.95) forwards}
+@keyframes bay-vao{0%{opacity:0;transform:translate(-330px,190px) rotate(-28deg) scale(1.35)}12%{opacity:1}65%{opacity:1;transform:translate(-30px,-40px) rotate(-8deg) scale(1)}100%{opacity:0;transform:translate(0,0) rotate(0) scale(.35)}}
+.hop-vuon.dang-lay .thu-bay-ra{animation:bay-ra 1.15s cubic-bezier(.2,.8,.3,1) forwards;animation-delay:var(--tre,0s)}
+@keyframes bay-ra{0%{opacity:0;transform:translate(0,0) scale(.3)}20%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1.2)}}
+.canh-vuon .lap-lanh{opacity:0;transform-box:fill-box;transform-origin:center}
+.hop-vuon.lap-lanh-on .lap-lanh{animation:lap-lanh .9s ease-out forwards;animation-delay:var(--tre,0s)}
+@keyframes lap-lanh{0%{opacity:0;transform:scale(.2)}40%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(.8) translateY(-24px)}}
+
+/* Nhật ký hòm thư */
+dialog.rat-rong{width:min(820px,calc(100% - 32px))}
+.dau-nhat-ky{display:flex;gap:16px;align-items:center;min-width:0}
+.dau-nhat-ky > div{min-width:0}
+.dau-nhat-ky p{font-size:.9rem}
+.thong-ke{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.thong-ke > div{border-radius:16px;padding:12px 14px;background:var(--sage-nhat);display:flex;flex-direction:column;min-width:0}
+.thong-ke > div:nth-child(2){background:var(--hong-nhat)}
+.thong-ke > div:nth-child(3){background:var(--vang-nhat)}
+.thong-ke b{font:600 1.7rem/1.15 var(--f-tieu-de);color:var(--la-dam)}
+.thong-ke span{font-size:.82rem}
+.loc{display:flex;gap:8px;flex-wrap:wrap}
+.loc button,.chip{border:1.5px solid var(--vien);background:var(--kem);border-radius:999px;padding:7px 14px;font:500 .88rem var(--f-noi-dung);color:var(--chu);cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.loc button[aria-pressed="true"]{background:var(--la-dam);border-color:var(--la-dam);color:var(--kem)}
+.chip:hover{border-color:var(--hong);background:#FFF0F5;transform:translateY(-1px)}
+.chon-goi-y{display:flex;flex-wrap:wrap;gap:8px}
+.dong-thoi-gian{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.muc-thu{background:var(--kem);border:1px solid var(--vien);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0;animation:hien .35s ease-out both}
+.muc-thu .dau{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:.84rem}
+.the-nho{display:inline-block;font-size:.75rem;font-weight:600;border-radius:999px;padding:2px 10px;background:var(--sage-nhat);color:var(--la-dam)}
+.the-nho.moi{background:var(--hong-dam);color:#fff}
+.the-nho.cho{background:var(--be-nhat);color:var(--chu)}
+.the-nho.vang{background:var(--vang-nhat);color:var(--chu-vang)}
+.noi-dung-gui{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.97rem}
+.noi-dung-gui.rut-gon{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.khoi-hoi-dap{background:var(--vang-nhat);border-left:4px solid var(--vang);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.khoi-hoi-dap > b{color:var(--chu-vang);font-size:.88rem}
+.khoi-hoi-dap p{white-space:pre-wrap;overflow-wrap:anywhere}
+.ghi-chu-thu{font-size:.88rem;opacity:.85}
+.trong-hop{text-align:center;padding:30px 16px;border:1.5px dashed var(--vien);border-radius:18px;display:flex;flex-direction:column;align-items:center;gap:12px}
+details.mo-rong{border:1px solid var(--vien);border-radius:14px;padding:12px 16px;background:var(--kem)}
+details.mo-rong summary{cursor:pointer;font-weight:600;color:var(--la-dam)}
+details.mo-rong[open] summary{margin-bottom:12px}
+.ds-ghim-cua-ban{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ds-ghim-cua-ban li{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--kem);border:1px solid var(--vien);border-radius:14px;padding:12px 14px}
+.ds-ghim-cua-ban p{font-family:var(--f-tieu-de);font-style:italic;color:var(--la-dam);overflow-wrap:anywhere;flex:1 1 220px}
+
+/* Podcast và bài hát đính kèm */
+.dinh-kem{display:flex;flex-direction:column;gap:10px}
+.the-nghe{display:flex;flex-direction:column;gap:10px;background:linear-gradient(135deg,var(--hong-nhat),var(--tim-nhat));border-radius:16px;padding:14px}
+.the-nghe .hang{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.the-nghe .bt{width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center;flex:none;color:var(--hong-dam)}
+.the-nghe .bt svg{width:24px;height:24px}
+.the-nghe .chu-the{flex:1 1 140px;min-width:0;display:flex;flex-direction:column}
+.the-nghe .chu-the b{color:var(--la-dam)}
+.the-nghe .chu-the span{font-size:.82rem}
+.the-nghe .nut{padding:10px 16px;font-size:.9rem}
+.the-nghe iframe{display:block;width:100%;border:0;border-radius:12px;background:#fff}
+.the-nghe iframe.video{aspect-ratio:16/9;height:auto}
+.the-nghe .nho{font-size:.78rem;opacity:.8}
+
+/* Đăng nhập, tài khoản */
+.tab-dn{display:grid;grid-template-columns:1fr 1fr;background:var(--kem);border-radius:14px;padding:4px;gap:4px}
+.tab-dn button{border:0;background:none;padding:10px;border-radius:10px;font:600 .95rem var(--f-noi-dung);color:var(--chu);cursor:pointer}
+.tab-dn button[aria-selected="true"]{background:var(--giay);color:var(--la-dam);box-shadow:0 3px 10px -5px rgba(0,0,0,.25)}
+.o-mat-khau{position:relative}
+.o-mat-khau input{padding-right:72px}
+.o-mat-khau button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:var(--sage-nhat);color:var(--la-dam);border-radius:8px;padding:6px 10px;font:600 .8rem var(--f-noi-dung);cursor:pointer}
+.hop-kiem{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;cursor:pointer}
+.hop-kiem input{accent-color:var(--la-dam);margin-top:5px;width:18px;height:18px;flex:none}
+.o-khoi-phuc{font-family:ui-monospace,Consolas,monospace;font-size:1.3rem;letter-spacing:.08em;text-align:center;background:var(--vang-nhat);border:2px dashed var(--vang);border-radius:14px;padding:16px;color:var(--chu-vang);user-select:all;overflow-wrap:anywhere}
+.the-tai-khoan{display:flex;gap:16px;align-items:center;background:var(--sage-nhat);border-radius:18px;padding:16px;min-width:0}
+.the-tai-khoan > div{min-width:0}
+.the-tai-khoan b{display:block;font:500 1.3rem var(--f-tieu-de);color:var(--la-dam);overflow-wrap:anywhere}
+.the-tai-khoan span{font-size:.9rem}
+.lua-chon-tk{display:grid;gap:10px}
+.lua-chon-tk .nut{justify-content:flex-start}
+.nut-nguy-hiem{color:var(--loi);border-color:#E7B9AE}
+
+/* Câu quote của ngày khi gặp từ ngữ nguy hiểm */
+.quote-ngay{font-family:var(--f-tieu-de);font-style:italic;font-size:clamp(1.15rem,3.6vw,1.4rem);line-height:1.5;color:var(--la-dam);background:linear-gradient(135deg,var(--vang-nhat),var(--hong-nhat));border-radius:18px;padding:22px 24px;margin:0}
+.quote-ngay small{display:block;font:600 .74rem var(--f-noi-dung);font-style:normal;margin-bottom:8px;color:var(--hong-dam);letter-spacing:.12em;text-transform:uppercase}
+.tu-khoa{background:#FAD9D3;color:var(--loi);padding:1px 6px;border-radius:6px;font-weight:600}
+
+/* Lưu mã */
+.o-ma.nhac{animation:nhac-ma 1s ease 2}
+@keyframes nhac-ma{0%,100%{box-shadow:0 0 0 0 rgba(201,63,110,0)}50%{box-shadow:0 0 0 6px rgba(201,63,110,.35)}}
+.o-4-ky-tu{font-family:ui-monospace,Consolas,monospace;font-size:1.4rem!important;letter-spacing:.4em;text-align:center;text-transform:uppercase;max-width:200px}
+
+/* Thông báo nhỏ */
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translate(-50%,calc(100% + 40px));visibility:hidden;background:var(--la-dam-dam);color:var(--kem);padding:12px 20px;border-radius:999px;font-size:.92rem;z-index:100;box-shadow:0 14px 30px -12px rgba(0,0,0,.4);transition:transform .35s cubic-bezier(.3,1.5,.5,1),visibility 0s .35s;max-width:calc(100vw - 32px);text-align:center}
+.toast.hien{transform:translate(-50%,0);visibility:visible;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+
 /* Điện thoại và máy tính bảng */
-@media (min-width:1101px){.menu li.muc-biet-danh{margin-left:8px}}
 @media (max-width:1100px){
-  .menu li.muc-biet-danh{padding:8px 12px}
-  .menu{display:none;position:absolute;top:72px;left:0;right:0;flex-direction:column;background:var(--kem);border-bottom:1px solid var(--vien);padding:8px max(20px,env(safe-area-inset-right,0px)) 16px max(20px,env(safe-area-inset-left,0px))}
+  .menu{display:none;position:absolute;top:72px;left:0;right:0;flex-direction:column;background:var(--kem);border-bottom:1px solid var(--vien);padding:8px max(20px,env(safe-area-inset-right,0px)) 16px max(20px,env(safe-area-inset-left,0px));box-shadow:0 20px 30px -24px rgba(0,0,0,.3)}
   .menu.mo{display:flex}
-  .menu a{padding:12px}
-  .nut-menu{display:inline-block}
+  .menu a{padding:13px 12px}
+  .nut-menu{display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:50%}
 }
 @media (max-width:960px){
   .luoi-cam-xuc{grid-template-columns:repeat(2,1fr)}
@@ -242,19 +437,44 @@ dialog[open]{animation:hien .25s ease-out}
 @media (max-width:820px){
   .vung{padding-block:72px}
   .chao{padding-block:36px 64px}
-  .chao .khung,.loi-nhan .khung,.tra-cuu .khung,.hop-hom-thu{grid-template-columns:1fr;gap:36px}
+  .chao .khung,.loi-nhan .khung,.tra-cuu .khung{grid-template-columns:1fr;gap:36px}
   .chao .minh-hoa{max-width:420px;margin-inline:auto}
-  .hop-hom-thu{padding:36px 24px;border-radius:22px}
-  .hop-hom-thu .minh-hoa,.tra-cuu .minh-hoa{max-width:300px;margin-inline:auto}
+  .tra-cuu .minh-hoa{max-width:280px;margin-inline:auto}
   .luoi-rieng-tu{grid-template-columns:1fr}
+  .hop-vuon{border-radius:24px}
+  .vuon-chu{padding-top:38px}
+  .canh-vuon{aspect-ratio:auto;height:340px}
 }
 @media (max-width:560px){
-  .luoi-cam-xuc{grid-template-columns:1fr}
+  body{font-size:16px}
+  .vung{padding-block:60px}
+  .khung{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .thanh-dh .khung{height:64px;gap:10px}
+  .menu{top:64px}
+  .luoi-cam-xuc{grid-template-columns:1fr;gap:12px}
+  .the-cam-xuc{padding:14px 16px}
+  .the-cam-xuc svg{width:48px;height:48px}
   .lua-chon.hai-cot{grid-template-columns:1fr}
-  .noi-dung-hop{padding:26px 20px 22px}
-  .giay-nhan{padding:40px 24px 26px}
-  .form-tra-cuu{padding:22px}
+  .noi-dung-hop{padding:24px 18px calc(20px + env(safe-area-inset-bottom,0px))}
+  .giay-nhan{padding:40px 22px 24px}
+  .form-tra-cuu{padding:20px}
   .hang-nut .nut{flex:1 1 auto}
+  .nut-tai-khoan{padding:4px;max-width:none}
+  .nut-tai-khoan .ten{display:none}
+  .canh-vuon{height:300px}
+  .nut-vuon{min-width:0;flex:1 1 140px}
+  .dieu-khien-vuon .hang-nut{width:100%}
+  .thong-ke{gap:8px}
+  .thong-ke > div{padding:10px}
+  .thong-ke b{font-size:1.4rem}
+  .luoi-ghim{grid-template-columns:1fr}
+  dialog,dialog.rong,dialog.rat-rong{width:100%;max-width:100%;max-height:92dvh;margin:auto 0 0;border-radius:22px 22px 0 0}
+  dialog[open]{animation:truot-len .32s cubic-bezier(.2,.8,.3,1)}
+  .chan-hop .nut{flex:1 1 auto}
+}
+@keyframes truot-len{from{transform:translateY(60px);opacity:.5}to{transform:none;opacity:1}}
+@media (max-width:380px){
+  .logo .chu-logo{display:none}
 }
 </style>
 </head>
@@ -266,12 +486,19 @@ dialog[open]{animation:hien .25s ease-out}
   <defs>
     <symbol id="i-la" viewBox="0 0 32 32"><path d="M16 29V14" stroke="#536B56" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M16 16C8 16 5 10 5 4c7 0 11 4 11 12z" fill="#A9B99D"/><path d="M16 19c7 0 11-4 11-10-7 0-11 3-11 10z" fill="#536B56"/></symbol>
     <symbol id="i-chon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#E6EBDF"/><path d="M12 18V10" stroke="#536B56" stroke-width="1.8" stroke-linecap="round"/><path d="M12 11c-3.5 0-5-2-5-5 3.2 0 5 1.6 5 5z" fill="#A9B99D"/><path d="M12 13c3.5 0 5-2 5-4.6-3.2 0-5 1.4-5 4.6z" fill="#536B56"/></symbol>
+    <symbol id="i-thu" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 7.5l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-nguoi" viewBox="0 0 24 24"><circle cx="12" cy="9" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-nhac" viewBox="0 0 24 24"><path d="M9 17V5l11-2v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2.8" fill="currentColor"/><circle cx="17.5" cy="15.5" r="2.8" fill="currentColor"/></symbol>
+    <symbol id="i-hop" viewBox="0 0 24 24"><path d="M4 21v-9a5 5 0 0 1 5-5h8a4 4 0 0 1 4 4v10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 7a4 4 0 0 1 4 4v10M15 3v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-but" viewBox="0 0 24 24"><path d="M4 20l1-5L16 4l4 4L9 19z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 6l4 4" stroke="currentColor" stroke-width="1.8"/></symbol>
   </defs>
 </svg>
 
 <header class="thanh-dh" id="thanh-dh">
   <div class="khung">
-    <a class="logo" href="#trang-chu" aria-label="Khu vườn tâm sự, về đầu trang"><svg aria-hidden="true"><use href="#i-la"/></svg>Khu vườn tâm sự</a>
+    <a class="logo" href="#trang-chu" aria-label="Khu vườn tâm sự, về đầu trang"><svg aria-hidden="true"><use href="#i-la"/></svg><span class="chu-logo">Khu vườn tâm sự</span></a>
     <nav aria-label="Điều hướng chính">
       <ul class="menu" id="menu-chinh">
         <li><a href="#trang-chu">Trang chủ</a></li>
@@ -280,11 +507,21 @@ dialog[open]{animation:hien .25s ease-out}
         <li><a href="#bang-ghim">Bảng ghim</a></li>
         <li><a href="#hom-thu">Hòm thư tâm sự</a></li>
         <li><a href="#tra-cuu">Tra cứu thư</a></li>
-        <li class="muc-biet-danh"><button class="nut-biet-danh" type="button" id="nut-biet-danh"><svg aria-hidden="true"><use href="#i-chon"/></svg><span id="chu-biet-danh">Tạo biệt danh</span></button></li>
       </ul>
     </nav>
-    <button class="nut-menu" id="nut-menu" type="button" aria-expanded="false" aria-controls="menu-chinh">Mục lục</button>
+    <div class="cum-phai">
+      <button class="nut-icon" id="nut-thong-bao-thu" type="button" aria-expanded="false" aria-controls="bang-thong-bao" aria-label="Thư của bạn">
+        <svg aria-hidden="true"><use href="#i-thu"/></svg>
+        <span class="huy-hieu" id="huy-hieu" hidden></span>
+      </button>
+      <button class="nut-tai-khoan" id="nut-tai-khoan" type="button">
+        <span class="anh-dai-dien" id="anh-dai-dien" aria-hidden="true"><svg style="color:var(--la-dam)"><use href="#i-nguoi"/></svg></span>
+        <span class="ten" id="chu-tai-khoan">Đăng nhập</span>
+      </button>
+      <button class="nut-menu" id="nut-menu" type="button" aria-expanded="false" aria-controls="menu-chinh" aria-label="Mục lục"><svg aria-hidden="true"><use href="#i-menu"/></svg></button>
+    </div>
   </div>
+  <div class="bang-thong-bao" id="bang-thong-bao" hidden></div>
 </header>
 
 <div class="dai-xem-thu" id="dai-xem-thu" hidden>
@@ -295,6 +532,7 @@ dialog[open]{animation:hien .25s ease-out}
 
 <!-- KHU VỰC 1: CHÀO MỪNG -->
 <section class="chao" id="trang-chu" aria-labelledby="td-chao">
+  <div class="canh-hoa-roi" id="canh-hoa-roi" aria-hidden="true"></div>
   <div class="khung">
     <div class="chao-chu">
       <span class="nhan-nho">Dành cho sinh viên UEH</span>
@@ -308,21 +546,25 @@ dialog[open]{animation:hien .25s ease-out}
     <svg class="minh-hoa" viewBox="0 40 480 345" role="img" aria-label="Một phong bì thư nằm giữa những nhành hoa và bãi cỏ nhỏ">
       <ellipse cx="248" cy="352" rx="210" ry="26" fill="#E6EBDF"/>
       <circle cx="372" cy="92" r="40" fill="#EFE8DE"/>
+      <g class="lac-lu">
       <path d="M118 352c-4-60 6-120 30-170" stroke="#536B56" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path d="M140 230c-26-6-40-26-40-50 26 4 40 22 40 50z" fill="#A9B99D"/>
       <path d="M128 290c22-8 34-28 30-52-22 8-34 26-30 52z" fill="#536B56"/>
-      <g transform="translate(150 176)"><circle r="10" fill="#DCCFC0"/><circle cx="0" cy="-15" r="9" fill="#F7F4EA" stroke="#DCCFC0" stroke-width="2"/><circle cx="14" cy="-5" r="9" fill="#F7F4EA" stroke="#DCCFC0" stroke-width="2"/><circle cx="9" cy="12" r="9" fill="#F7F4EA" stroke="#DCCFC0" stroke-width="2"/><circle cx="-9" cy="12" r="9" fill="#F7F4EA" stroke="#DCCFC0" stroke-width="2"/><circle cx="-14" cy="-5" r="9" fill="#F7F4EA" stroke="#DCCFC0" stroke-width="2"/><circle r="6" fill="#A9B99D"/></g>
+      <g transform="translate(150 176)"><circle r="10" fill="#FFD45C"/><circle cx="0" cy="-15" r="9" fill="#FFE6EE" stroke="#FF8FB1" stroke-width="2"/><circle cx="14" cy="-5" r="9" fill="#FFE6EE" stroke="#FF8FB1" stroke-width="2"/><circle cx="9" cy="12" r="9" fill="#FFE6EE" stroke="#FF8FB1" stroke-width="2"/><circle cx="-9" cy="12" r="9" fill="#FFE6EE" stroke="#FF8FB1" stroke-width="2"/><circle cx="-14" cy="-5" r="9" fill="#FFE6EE" stroke="#FF8FB1" stroke-width="2"/><circle r="6" fill="#FFD45C"/></g>
+      </g>
+      <g class="lac-lu cham">
       <path d="M392 352c2-50-6-96-26-136" stroke="#536B56" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path d="M380 280c24-4 38-22 38-46-24 4-38 20-38 46z" fill="#A9B99D"/>
       <path d="M372 250c-20-8-28-26-24-46 20 8 28 24 24 46z" fill="#536B56"/>
-      <g transform="translate(364 208)"><path d="M0 0c-10-12-10-26 0-34 10 8 10 22 0 34z" fill="#DCCFC0"/><path d="M0 0c-14-4-22-16-20-28 12 2 20 14 20 28z" fill="#EFE8DE" stroke="#DCCFC0" stroke-width="2"/><path d="M0 0c14-4 22-16 20-28-12 2-20 14-20 28z" fill="#EFE8DE" stroke="#DCCFC0" stroke-width="2"/></g>
-      <g transform="rotate(-7 250 262)">
+      <g transform="translate(364 208)"><path d="M0 0c-10-12-10-26 0-34 10 8 10 22 0 34z" fill="#B9A7FF"/><path d="M0 0c-14-4-22-16-20-28 12 2 20 14 20 28z" fill="#EEE9FF" stroke="#B9A7FF" stroke-width="2"/><path d="M0 0c14-4 22-16 20-28-12 2-20 14-20 28z" fill="#EEE9FF" stroke="#B9A7FF" stroke-width="2"/></g>
+      </g>
+      <g class="phong-bi"><g transform="rotate(-7 250 262)">
         <rect x="150" y="196" width="200" height="132" rx="12" fill="#FFFDF6" stroke="#DCCFC0" stroke-width="3"/>
         <path d="M152 204l98 70 98-70" fill="none" stroke="#DCCFC0" stroke-width="3" stroke-linejoin="round"/>
         <path d="M152 324l70-56M348 324l-70-56" stroke="#EFE8DE" stroke-width="3"/>
         <circle cx="250" cy="272" r="17" fill="#A9B99D"/>
         <path d="M250 282v-14M250 270c-5 0-8-3-8-8 5 0 8 3 8 8zM250 274c5 0 8-3 8-7-5 0-8 3-8 7z" stroke="#536B56" stroke-width="2" fill="#536B56" stroke-linecap="round"/>
-      </g>
+      </g></g>
       <path d="M60 352c6-16 10-24 18-30M78 352c0-14 4-22 10-28M232 354c4-12 10-18 16-22M300 354c-2-14 2-22 8-28M440 352c-4-14-8-22-16-28" stroke="#A9B99D" stroke-width="3" fill="none" stroke-linecap="round"/>
     </svg>
   </div>
@@ -381,7 +623,7 @@ dialog[open]{animation:hien .25s ease-out}
       <svg class="nhanh-hoa" viewBox="0 0 80 60" aria-hidden="true"><path d="M8 52c20-6 40-20 56-44" stroke="#536B56" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M30 40c-4-10 0-18 10-20 2 10-2 18-10 20zM46 26c-2-10 4-16 12-16 0 10-4 15-12 16z" fill="#A9B99D"/><circle cx="64" cy="8" r="7" fill="#DCCFC0"/><circle cx="64" cy="8" r="3" fill="#FFFDF6"/></svg>
       <div class="giay-nhan">
         <blockquote id="loi-nhan-hien" aria-live="polite">Bạn không cần phải giỏi mọi thứ ngay từ lần đầu tiên.</blockquote>
-        <div class="chan-giay"><span>Một lời nhắn từ khu vườn nhỏ</span><span id="so-loi-nhan" aria-hidden="true"></span></div>
+        <div class="chan-giay"><span id="nhan-loi-nhan" class="nhan-hom-nay">Lời nhắn hôm nay</span><span id="so-loi-nhan" aria-hidden="true"></span></div>
       </div>
     </div>
   </div>
@@ -402,36 +644,150 @@ dialog[open]{animation:hien .25s ease-out}
   </div>
 </section>
 
-<!-- KHU VỰC 4: HÒM THƯ TÂM SỰ -->
-<section class="vung-hom-thu" id="hom-thu" aria-labelledby="td-hom-thu">
+<!-- KHU VỰC 4: HÒM THƯ TÂM SỰ — KHU VƯỜN CỦA BẠN -->
+<section class="vung-vuon" id="hom-thu" aria-labelledby="td-hom-thu">
   <div class="khung">
-    <div class="hop-hom-thu">
-      <svg class="minh-hoa" viewBox="0 0 360 340" role="img" aria-label="Hộp thư màu xanh sage với phong bì và những nhành hoa nhỏ">
-        <ellipse cx="180" cy="312" rx="150" ry="16" fill="#A9B99D" opacity=".35"/>
-        <rect x="170" y="170" width="20" height="142" rx="4" fill="#62594F" opacity=".75"/>
-        <path d="M86 112a56 56 0 0 1 112 0v84H86z" fill="#A9B99D"/>
-        <path d="M150 56h52a56 56 0 0 1 56 56v84h-108z" fill="#536B56"/>
-        <path d="M150 56a56 56 0 0 1 48 56v84" fill="none" stroke="#43584A" stroke-width="2"/>
-        <rect x="84" y="128" width="72" height="8" rx="4" fill="#536B56" opacity=".55"/>
-        <g transform="rotate(-12 120 100)"><rect x="84" y="72" width="80" height="52" rx="6" fill="#FFFDF6" stroke="#DCCFC0" stroke-width="2.5"/><path d="M86 76l38 26 38-26" fill="none" stroke="#DCCFC0" stroke-width="2.5"/></g>
-        <path d="M258 96V58" stroke="#62594F" stroke-width="3" stroke-linecap="round"/>
-        <path d="M258 58h28l-6 10 6 10h-28z" fill="#DCCFC0"/>
-        <path d="M70 312c0-30 6-52 18-70" stroke="#536B56" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-        <path d="M78 270c-14-2-22-12-22-26 14 2 22 12 22 26zM84 254c12-4 18-14 16-26-12 4-18 14-16 26z" fill="#536B56"/>
-        <g transform="translate(90 236)"><circle r="8" fill="#FFFDF6" stroke="#DCCFC0" stroke-width="2"/><circle r="3.5" fill="#A9B99D"/></g>
-        <path d="M290 312c0-26-4-46-14-62" stroke="#536B56" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-        <path d="M284 276c14-2 22-12 20-24-12 2-20 12-20 24z" fill="#FFFDF6" stroke="#536B56" stroke-width="2"/>
-        <g transform="translate(276 244)"><circle r="9" fill="#DCCFC0"/><circle r="3.5" fill="#FFFDF6"/></g>
-        <path d="M210 312c2-12 6-20 12-24M226 312c0-10 4-16 8-20M130 312c-2-12-6-18-12-22" stroke="#536B56" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-      </svg>
-      <div class="chu">
+    <div class="hop-vuon" id="hop-vuon" data-so-thu="0">
+      <div class="vuon-chu">
         <span class="nhan-nho">Hòm thư tâm sự</span>
-        <h2 id="td-hom-thu">Có điều gì muốn kể với chúng mình không?</h2>
-        <p class="mo-ta">Bạn có thể viết ra những điều mình chưa biết chia sẻ cùng ai. Không cần phải viết thật hay, cũng không cần phải sắp xếp mọi thứ thật hoàn hảo. Chỉ cần viết những gì bạn muốn chia sẻ.</p>
+        <h2 id="td-hom-thu">Khu vườn nhỏ của riêng bạn</h2>
+        <p>Bấm <b>Cất thư</b> để gửi điều bạn muốn kể. Bấm <b>Lấy thư</b> để mở lại những lá thư bạn đã gửi và lời hồi đáp khu vườn gửi lại, như một cuốn nhật ký nhỏ.</p>
+      </div>
+
+      <svg class="canh-vuon" viewBox="0 0 1000 430" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Một khu vườn đầy nắng, hoa và bướm, ở giữa là chiếc hòm thư màu hồng">
+        <defs>
+          <symbol id="f-cuc" viewBox="0 0 40 80"><path d="M20 80V34" stroke="#3E9B55" stroke-width="3" stroke-linecap="round"/><path d="M20 62c-8-1-12-6-12-12 7 1 12 5 12 12z" fill="#4FAF62"/><g fill="#fff" stroke="#F1E4C8" stroke-width="1"><ellipse cx="20" cy="14" rx="5" ry="9"/><ellipse cx="20" cy="38" rx="5" ry="9"/><ellipse cx="8" cy="26" rx="9" ry="5"/><ellipse cx="32" cy="26" rx="9" ry="5"/><ellipse cx="11.5" cy="17.5" rx="5" ry="8" transform="rotate(-45 11.5 17.5)"/><ellipse cx="28.5" cy="34.5" rx="5" ry="8" transform="rotate(-45 28.5 34.5)"/><ellipse cx="28.5" cy="17.5" rx="5" ry="8" transform="rotate(45 28.5 17.5)"/><ellipse cx="11.5" cy="34.5" rx="5" ry="8" transform="rotate(45 11.5 34.5)"/></g><circle cx="20" cy="26" r="6.5" fill="#FFD45C"/></symbol>
+          <symbol id="f-hong" viewBox="0 0 40 80"><path d="M20 80V32" stroke="#3E9B55" stroke-width="3" stroke-linecap="round"/><path d="M20 58c8-1 12-6 12-12-7 1-12 5-12 12z" fill="#4FAF62"/><g fill="#FF8FB1"><circle cx="20" cy="15" r="8"/><circle cx="30" cy="22" r="8"/><circle cx="26" cy="34" r="8"/><circle cx="14" cy="34" r="8"/><circle cx="10" cy="22" r="8"/></g><circle cx="20" cy="25" r="5.5" fill="#FFE58A"/></symbol>
+          <symbol id="f-tulip" viewBox="0 0 40 80"><path d="M20 80V34" stroke="#3E9B55" stroke-width="3" stroke-linecap="round"/><path d="M20 70c-9-4-13-14-11-24 8 4 11 12 11 24z" fill="#4FAF62"/><path d="M8 16l6 6 6-10 6 10 6-6v12a12 12 0 0 1-24 0z" fill="#FF9F7F"/><path d="M20 12l6 10v6a6 6 0 0 1-6 6" fill="#FF7F5C" opacity=".6"/></symbol>
+          <symbol id="f-tim" viewBox="0 0 40 80"><path d="M20 80V30" stroke="#3E9B55" stroke-width="3" stroke-linecap="round"/><g fill="#B9A7FF"><circle cx="20" cy="10" r="5"/><circle cx="15" cy="18" r="5.5"/><circle cx="25" cy="18" r="5.5"/><circle cx="14" cy="27" r="6"/><circle cx="26" cy="27" r="6"/><circle cx="20" cy="34" r="6"/></g><g fill="#D9CFFF"><circle cx="20" cy="18" r="3"/><circle cx="20" cy="27" r="3"/></g></symbol>
+          <symbol id="f-phong-bi" viewBox="0 0 60 40"><rect x="1.5" y="1.5" width="57" height="37" rx="5" fill="#FFFDF6" stroke="#FF8FB1" stroke-width="3"/><path d="M3 5l27 19L57 5" fill="none" stroke="#FF8FB1" stroke-width="3" stroke-linejoin="round"/><path d="M30 31c-4-3-7-5-7-8a3.5 3.5 0 0 1 7-1 3.5 3.5 0 0 1 7 1c0 3-3 5-7 8z" fill="#C93F6E"/></symbol>
+        </defs>
+
+        <!-- Mặt trời và mây -->
+        <g transform="translate(860 82)">
+          <g class="tia-nang" stroke="#FFC93A" stroke-width="6" stroke-linecap="round"><path d="M0-78v-18M0 78v18M-78 0h-18M78 0h18M-55-55l-12-12M55 55l12 12M55-55l12-12M-55 55l-12 12"/></g>
+          <circle r="54" fill="#FFE58A" opacity=".6"/>
+          <circle r="42" fill="#FFD45C"/>
+          <path d="M-14 6q14 14 28 0" stroke="#C98A00" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <circle cx="-14" cy="-8" r="4" fill="#C98A00"/><circle cx="14" cy="-8" r="4" fill="#C98A00"/>
+          <circle cx="-26" cy="6" r="6" fill="#FF8FB1" opacity=".55"/><circle cx="26" cy="6" r="6" fill="#FF8FB1" opacity=".55"/>
+        </g>
+        <g class="may" fill="#fff" opacity=".95"><circle cx="60" cy="80" r="26"/><circle cx="96" cy="68" r="34"/><circle cx="136" cy="82" r="24"/><rect x="40" y="82" width="116" height="24" rx="12"/></g>
+        <g class="may m2" fill="#fff" opacity=".8"><circle cx="40" cy="150" r="18"/><circle cx="66" cy="140" r="24"/><circle cx="94" cy="152" r="16"/><rect x="26" y="152" width="82" height="16" rx="8"/></g>
+        <g class="may m3" fill="#fff" opacity=".7"><circle cx="30" cy="44" r="14"/><circle cx="50" cy="36" r="19"/><circle cx="72" cy="46" r="13"/></g>
+
+        <!-- Đồi -->
+        <path d="M0 290C150 220 300 232 450 282 600 232 800 206 1000 276V430H0z" fill="#B4EBA8"/>
+        <path d="M0 336C200 288 380 300 520 340 700 292 860 300 1000 326V430H0z" fill="#8ADB86"/>
+
+        <!-- Cây táo bên trái -->
+        <rect x="108" y="236" width="22" height="130" rx="8" fill="#A8754C"/>
+        <g fill="#4FAF62"><circle cx="119" cy="214" r="62"/><circle cx="72" cy="244" r="38"/><circle cx="166" cy="244" r="40"/></g>
+        <g fill="#6CCB77"><circle cx="100" cy="196" r="30"/><circle cx="146" cy="214" r="24"/></g>
+        <g fill="#FF7A6B"><circle cx="90" cy="230" r="8"/><circle cx="140" cy="186" r="8"/><circle cx="158" cy="252" r="8"/><circle cx="112" cy="262" r="7"/></g>
+
+        <!-- Cây hoa anh đào bên phải -->
+        <path d="M886 370c2-60-4-100-20-130M880 300c20-18 34-24 52-26" stroke="#9C6644" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <g fill="#FFB8CF"><circle cx="864" cy="214" r="54"/><circle cx="926" cy="248" r="44"/><circle cx="820" cy="250" r="36"/></g>
+        <g fill="#FFD6E3"><circle cx="846" cy="196" r="24"/><circle cx="906" cy="226" r="20"/></g>
+        <g fill="#fff" opacity=".85"><circle cx="836" cy="232" r="4"/><circle cx="880" cy="204" r="4"/><circle cx="930" cy="262" r="4"/><circle cx="900" cy="246" r="3"/></g>
+
+        <!-- Hàng rào -->
+        <g fill="#FFFDF6" stroke="#E6DCC8" stroke-width="2">
+          <rect x="300" y="336" width="400" height="10" rx="4"/><rect x="300" y="360" width="400" height="10" rx="4"/>
+          <path d="M310 380v-58l10-12 10 12v58zM350 380v-58l10-12 10 12v58zM390 380v-58l10-12 10 12v58zM590 380v-58l10-12 10 12v58zM630 380v-58l10-12 10 12v58zM670 380v-58l10-12 10 12v58z"/>
+        </g>
+
+        <!-- Mặt đất và lối đi -->
+        <path d="M0 384C250 362 750 362 1000 384V430H0z" fill="#5DBE6E"/>
+        <g fill="#EFE3D0"><ellipse cx="498" cy="420" rx="30" ry="8"/><ellipse cx="530" cy="404" rx="24" ry="7"/><ellipse cx="496" cy="392" rx="20" ry="6"/></g>
+
+        <!-- Hòm thư -->
+        <g class="hom">
+          <ellipse cx="500" cy="414" rx="70" ry="10" fill="#3E9B55" opacity=".35"/>
+          <rect x="488" y="292" width="24" height="122" rx="5" fill="#B97A4B"/>
+          <rect x="494" y="292" width="6" height="122" fill="#D89A68" opacity=".6"/>
+          <path d="M404 300V236a96 58 0 0 1 192 0v64z" fill="#E85A86"/>
+          <path d="M418 292v-54a82 46 0 0 1 164 0v54z" fill="#7B2D4B"/>
+          <use class="thu-trong t1" href="#f-phong-bi" x="438" y="252" width="60" height="40"/>
+          <use class="thu-trong t2" href="#f-phong-bi" x="496" y="256" width="56" height="37"/>
+          <use class="thu-trong t3" href="#f-phong-bi" x="466" y="238" width="54" height="36"/>
+          <use class="thu-bay thu-bay-vao" href="#f-phong-bi" x="470" y="246" width="60" height="40"/>
+          <use class="thu-bay thu-bay-ra" href="#f-phong-bi" x="470" y="246" width="60" height="40" style="--x:-240px;--y:-150px;--r:-24deg;--tre:0s"/>
+          <use class="thu-bay thu-bay-ra" href="#f-phong-bi" x="470" y="246" width="60" height="40" style="--x:10px;--y:-210px;--r:8deg;--tre:.12s"/>
+          <use class="thu-bay thu-bay-ra" href="#f-phong-bi" x="470" y="246" width="60" height="40" style="--x:250px;--y:-140px;--r:22deg;--tre:.24s"/>
+          <g class="cua-hom">
+            <path d="M418 292v-54a82 46 0 0 1 164 0v54z" fill="#FF7AA2" stroke="#E85A86" stroke-width="3"/>
+            <path d="M432 286v-46a68 36 0 0 1 136 0v46z" fill="none" stroke="#FFB3C8" stroke-width="3"/>
+            <path d="M500 270c-9-6-15-11-15-17a7.5 7.5 0 0 1 15-2 7.5 7.5 0 0 1 15 2c0 6-6 11-15 17z" fill="#fff"/>
+            <circle cx="566" cy="262" r="7" fill="#FFD45C" stroke="#C98A00" stroke-width="2"/>
+          </g>
+          <rect x="398" y="294" width="204" height="12" rx="6" fill="#C94473"/>
+          <g class="co-hom">
+            <rect x="601" y="206" width="7" height="80" rx="3.5" fill="#8A5A2E"/>
+            <path d="M608 206h40l-9 13 9 13h-40z" fill="#FFD45C" stroke="#C98A00" stroke-width="2" stroke-linejoin="round"/>
+          </g>
+          <circle cx="604" cy="282" r="6" fill="#6B4320"/>
+        </g>
+
+        <!-- Bong bóng báo thư mới -->
+        <g class="bong-bao"><g>
+          <rect x="414" y="110" width="172" height="44" rx="22" fill="#fff" stroke="#FF8FB1" stroke-width="3"/>
+          <path d="M490 152l10 14 10-14z" fill="#fff" stroke="#FF8FB1" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="488" y="148" width="24" height="6" fill="#fff"/>
+          <text id="chu-bong-bao" x="500" y="139" text-anchor="middle" style="font:700 18px 'Be Vietnam Pro',system-ui,sans-serif;fill:#C93F6E">Có thư mới!</text>
+        </g></g>
+
+        <!-- Lấp lánh khi cất thư -->
+        <g fill="#FFD45C">
+          <path class="lap-lanh" style="--tre:0s" d="M380 210l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+          <path class="lap-lanh" style="--tre:.1s" d="M628 180l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/>
+          <path class="lap-lanh" style="--tre:.2s" d="M470 150l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/>
+        </g>
+        <g fill="#FF8FB1">
+          <path class="lap-lanh" style="--tre:.15s" d="M548 160c-6-4-10-7-10-11a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 4-4 7-10 11z"/>
+          <path class="lap-lanh" style="--tre:.3s" d="M410 260c-6-4-10-7-10-11a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 4-4 7-10 11z"/>
+          <path class="lap-lanh" style="--tre:.05s" d="M640 250c-6-4-10-7-10-11a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 4-4 7-10 11z"/>
+        </g>
+
+        <!-- Hoa -->
+        <use class="hoa" href="#f-hong" x="20" y="340" width="40" height="80" style="--tre:-.4s"/>
+        <use class="hoa" href="#f-cuc" x="62" y="352" width="34" height="68" style="--tre:-1.6s"/>
+        <use class="hoa" href="#f-tulip" x="160" y="340" width="40" height="80" style="--tre:-2.4s"/>
+        <use class="hoa" href="#f-tim" x="206" y="350" width="34" height="70" style="--tre:-.9s"/>
+        <use class="hoa" href="#f-cuc" x="250" y="336" width="40" height="84" style="--tre:-3s"/>
+        <use class="hoa" href="#f-hong" x="330" y="356" width="32" height="64" style="--tre:-1.2s"/>
+        <use class="hoa" href="#f-tulip" x="378" y="350" width="34" height="70" style="--tre:-2s"/>
+        <use class="hoa" href="#f-cuc" x="590" y="352" width="34" height="68" style="--tre:-.2s"/>
+        <use class="hoa" href="#f-tim" x="634" y="340" width="40" height="80" style="--tre:-2.8s"/>
+        <use class="hoa" href="#f-hong" x="700" y="346" width="38" height="76" style="--tre:-1.8s"/>
+        <use class="hoa" href="#f-tulip" x="770" y="352" width="34" height="68" style="--tre:-.6s"/>
+        <use class="hoa" href="#f-cuc" x="812" y="340" width="40" height="80" style="--tre:-2.2s"/>
+        <use class="hoa" href="#f-tim" x="900" y="348" width="36" height="72" style="--tre:-1s"/>
+        <use class="hoa" href="#f-hong" x="946" y="338" width="40" height="82" style="--tre:-3.2s"/>
+
+        <!-- Bướm và ong -->
+        <g class="buom" style="--tre:0s"><g transform="translate(250 190)">
+          <g class="canh-buom"><path d="M0 0c-18-22-34-10-26 6 6 10 18 8 26-6z" fill="#FF8FB1"/><path d="M0 0c18-22 34-10 26 6-6 10-18 8-26-6z" fill="#FF8FB1"/><path d="M0 2c-12 16-22 14-18 2M0 2c12 16 22 14 18 2" fill="#FFD45C"/></g>
+          <rect x="-2.5" y="-10" width="5" height="22" rx="2.5" fill="#5B3B00"/>
+        </g></g>
+        <g class="buom" style="--tre:-7s"><g transform="translate(620 150)">
+          <g class="canh-buom"><path d="M0 0c-16-20-30-9-23 5 5 9 16 7 23-5z" fill="#B9A7FF"/><path d="M0 0c16-20 30-9 23 5-5 9-16 7-23-5z" fill="#B9A7FF"/></g>
+          <rect x="-2" y="-9" width="4" height="19" rx="2" fill="#4A3A80"/>
+        </g></g>
+        <g class="ong"><g transform="translate(760 270)">
+          <ellipse cx="0" cy="0" rx="12" ry="9" fill="#FFD45C"/><path d="M-3-8v16M4-8v16" stroke="#3A2A00" stroke-width="3"/>
+          <ellipse cx="-3" cy="-11" rx="7" ry="5" fill="#fff" opacity=".85"/><ellipse cx="5" cy="-12" rx="6" ry="4" fill="#fff" opacity=".85"/>
+        </g></g>
+      </svg>
+
+      <div class="dieu-khien-vuon">
         <div class="hang-nut">
-          <button class="nut nut-chinh" type="button" data-mo="hop-gui-thu">Gửi một lá thư</button>
-          <button class="nut nut-phu" type="button" data-mo="hop-cach-hoat-dong">Tìm hiểu cách hoạt động</button>
+          <button class="nut nut-vuon nut-lay" type="button" id="nut-lay-thu"><svg aria-hidden="true"><use href="#i-thu"/></svg>Lấy thư</button>
+          <button class="nut nut-vuon nut-cat" type="button" id="nut-cat-thu"><svg aria-hidden="true"><use href="#i-but"/></svg>Cất thư</button>
         </div>
+        <p class="trang-thai-vuon" id="trang-thai-vuon" aria-live="polite">Đăng nhập để hòm thư nhớ giúp bạn mọi lá thư đã gửi và nhận.</p>
+        <p class="lien-ket-phu">Không cần tài khoản vẫn cất thư ẩn danh được. <button class="nut-chu" type="button" data-mo="hop-cach-hoat-dong">Hòm thư hoạt động thế nào?</button></p>
       </div>
     </div>
   </div>
@@ -480,7 +836,8 @@ dialog[open]{animation:hien .25s ease-out}
       <h2 id="td-rieng-tu">Khu vườn giữ gìn những điều bạn gửi gắm như thế nào?</h2>
     </div>
     <ul class="luoi-rieng-tu">
-      <li><svg aria-hidden="true"><use href="#i-chon"/></svg><span>Bạn được quyền chọn chia sẻ ẩn danh. Khu vườn không hỏi họ tên, mã số sinh viên hay số điện thoại.</span></li>
+      <li><svg aria-hidden="true"><use href="#i-chon"/></svg><span>Bạn được quyền chọn chia sẻ ẩn danh, không cần tài khoản. Khu vườn không hỏi họ tên, mã số sinh viên hay số điện thoại.</span></li>
+      <li><svg aria-hidden="true"><use href="#i-chon"/></svg><span>Nếu tạo tài khoản, tên đăng nhập và biệt danh không cần là tên thật. Mật khẩu được mã hóa một chiều, nhóm cũng không đọc được.</span></li>
       <li><svg aria-hidden="true"><use href="#i-chon"/></svg><span>Email là thông tin tự nguyện, không bắt buộc, và chỉ dùng để gửi phản hồi khi bạn yêu cầu.</span></li>
       <li><svg aria-hidden="true"><use href="#i-chon"/></svg><span>Nội dung thư chỉ những thành viên được phân quyền trong nhóm mới đọc được.</span></li>
       <li><svg aria-hidden="true"><use href="#i-chon"/></svg><span>Thư của bạn không bao giờ được đăng công khai. Chỉ những lời nhắn bạn tự ghim lên Bảng ghim mới hiện cho mọi người, và phải được duyệt trước.</span></li>
@@ -557,6 +914,7 @@ dialog[open]{animation:hien .25s ease-out}
   <form class="noi-dung-hop" id="form-gui-thu" novalidate>
     <div class="dau-hop"><h2 id="td-gui-thu">Gửi một lá thư</h2><button class="nut-dong" type="button" data-dong aria-label="Đóng">×</button></div>
     <p class="nhan-xem-truoc" id="nhan-xem-thu-form" hidden>Chế độ xem thử: thư sẽ chưa được gửi đi</p>
+    <p class="luu-y" id="ghi-chu-tk-thu"></p>
 
     <div class="truong">
       <label for="noi-dung-thu">Nội dung thư <span class="phu">(bắt buộc)</span></label>
@@ -629,29 +987,52 @@ dialog[open]{animation:hien .25s ease-out}
   <div class="noi-dung-hop">
     <div class="dau-hop"><h2 id="td-cach-hoat-dong">Hòm thư hoạt động như thế nào?</h2><button class="nut-dong" type="button" data-dong aria-label="Đóng">×</button></div>
     <ol class="cac-buoc">
-      <li><span><b>Bạn viết và gửi thư.</b>Viết điều bạn muốn kể, chọn mong muốn của mình và tự đặt một mã thư riêng.</span></li>
+      <li><span><b>Bạn bấm Cất thư và viết.</b>Viết điều bạn muốn kể, chọn mong muốn của mình và giữ lại một mã thư riêng.</span></li>
       <li><span><b>Khu vườn nhỏ tiếp nhận thư.</b>Thư được lưu riêng tư, chỉ thành viên được phân quyền mới đọc được.</span></li>
-      <li><span><b>Nhóm xem xét và chuẩn bị phản hồi phù hợp.</b>Nếu bạn chọn chỉ muốn chia sẻ, thư sẽ được đọc và trân trọng mà không cần hồi đáp.</span></li>
-      <li><span><b>Bạn dùng mã riêng để quay lại tra cứu.</b>Nhập mã ở mục Tra cứu thư để xem lời hồi đáp dành cho bạn.</span></li>
+      <li><span><b>Nhóm xem xét và chuẩn bị phản hồi phù hợp.</b>Lời hồi đáp có thể kèm một podcast hoặc một bài hát dành riêng cho bạn. Nếu bạn chọn chỉ muốn chia sẻ, thư sẽ được đọc và trân trọng mà không cần hồi đáp.</span></li>
+      <li><span><b>Bạn bấm Lấy thư để đọc lại.</b>Nếu đã đăng nhập, mọi lá thư và lời hồi đáp nằm sẵn trong hòm thư của bạn như một cuốn nhật ký. Nếu gửi ẩn danh, bạn nhập mã ở mục Tra cứu thư.</span></li>
     </ol>
     <p class="luu-y">Thời gian hồi đáp có thể mất vài ngày. Khu vườn nhỏ không phải đường dây hỗ trợ khẩn cấp.</p>
     <div class="chan-hop"><button class="nut nut-phu" type="button" data-dong>Đóng</button><button class="nut nut-chinh" type="button" data-mo="hop-gui-thu">Gửi một lá thư</button></div>
   </div>
 </dialog>
 
-<dialog id="hop-thanh-cong" aria-labelledby="td-thanh-cong">
+<dialog id="hop-thanh-cong" aria-labelledby="td-thanh-cong" data-giu-mo>
   <div class="noi-dung-hop">
     <p class="nhan-xem-truoc" id="nhan-xem-truoc-tc" hidden>Bản xem trước: thư này chưa được gửi đi</p>
-    <div class="dau-hop"><h2 id="td-thanh-cong">Lá thư của bạn đã được gửi!</h2><button class="nut-dong" type="button" data-dong aria-label="Đóng">×</button></div>
-    <p>Cảm ơn bạn đã tin tưởng và chia sẻ cùng Khu vườn nhỏ. Lá thư của bạn đã đến khu vườn nhỏ này. Hãy lưu lại mã thư để có thể quay lại tra cứu lời hồi đáp nhé.</p>
-    <div class="o-ma">
+    <div class="dau-hop"><h2 id="td-thanh-cong">Lá thư đã nằm gọn trong hòm!</h2><button class="nut-dong" type="button" id="nut-dong-tc" aria-label="Đóng">×</button></div>
+    <p>Cảm ơn bạn đã tin tưởng và chia sẻ cùng Khu vườn nhỏ. Hãy lưu lại mã thư dưới đây để có thể quay lại tra cứu lời hồi đáp nhé.</p>
+    <p class="luu-y" id="tc-trong-hop" hidden></p>
+    <div class="o-ma" id="o-ma-da-gui">
       <label for="ma-da-gui" class="an-di">Mã thư của bạn</label>
       <input type="text" id="ma-da-gui" readonly>
       <button class="nut nut-phu" type="button" id="nut-sao-chep">Sao chép mã</button>
+      <button class="nut nut-phu" type="button" id="nut-tai-ma">Tải về máy</button>
     </div>
     <span class="huong-dan" id="tb-sao-chep" role="status"></span>
-    <div class="chan-hop"><button class="nut nut-chinh" type="button" data-dong>Hoàn tất</button></div>
+    <div class="chan-hop"><button class="nut nut-chinh" type="button" id="nut-hoan-tat">Hoàn tất</button></div>
   </div>
+</dialog>
+
+<dialog id="hop-luu-ma" aria-labelledby="td-luu-ma" data-giu-mo>
+  <form class="noi-dung-hop" id="form-luu-ma" novalidate>
+    <div class="dau-hop"><h2 id="td-luu-ma">Bạn đã lưu mã thư chưa?</h2></div>
+    <div id="buoc-luu-1">
+      <p>Mã thư là chìa khóa để mở lời hồi đáp. Nếu đóng cửa sổ này mà chưa lưu, khu vườn <b>không thể tìm lại mã</b> giúp bạn.</p>
+    </div>
+    <div id="buoc-luu-2" hidden>
+      <p>Kiểm tra lần cuối nhé: hãy gõ <b>4 ký tự cuối</b> của mã thư mà bạn vừa lưu.</p>
+      <div class="truong" style="margin-top:14px">
+        <label for="o-4-ky-tu" class="an-di">4 ký tự cuối của mã thư</label>
+        <input type="text" id="o-4-ky-tu" class="o-4-ky-tu" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="loi-4-ky-tu">
+        <span class="bao-loi" id="loi-4-ky-tu"></span>
+      </div>
+    </div>
+    <div class="chan-hop">
+      <button class="nut nut-phu" type="button" id="nut-chua-luu">Chưa, để mình lưu</button>
+      <button class="nut nut-chinh" type="submit" id="nut-da-luu">Mình lưu rồi</button>
+    </div>
+  </form>
 </dialog>
 
 <dialog id="hop-hoi-dap" aria-labelledby="td-hoi-dap">
@@ -659,11 +1040,178 @@ dialog[open]{animation:hien .25s ease-out}
     <p class="nhan-xem-truoc" id="nhan-xem-truoc-hd" hidden>Chế độ xem thử: đây là lời hồi đáp mẫu</p>
     <div class="dau-hop"><h2 id="td-hoi-dap">Có một lời nhắn dành cho bạn!</h2><button class="nut-dong" type="button" data-dong aria-label="Đóng">×</button></div>
     <div class="thu-hoi-dap" id="noi-dung-hoi-dap"></div>
+    <div class="dinh-kem" id="dinh-kem-hoi-dap"></div>
     <span class="huong-dan" id="ngay-hoi-dap"></span>
     <p>Hy vọng lời nhắn nhỏ này sẽ mang đến cho bạn một chút động viên.</p>
+    <div id="cat-hoi-dap"></div>
     <div class="chan-hop"><button class="nut nut-chinh" type="button" data-dong>Cảm ơn khu vườn</button></div>
   </div>
 </dialog>
+
+<dialog id="hop-nguy-co" aria-labelledby="td-nguy-co">
+  <div class="noi-dung-hop">
+    <div class="dau-hop"><h2 id="td-nguy-co">Khu vườn đang ở đây với bạn</h2><button class="nut-dong" type="button" id="nut-dong-nguy-co" aria-label="Đóng">×</button></div>
+    <blockquote class="quote-ngay"><small id="ngay-quote">Câu nói của hôm nay</small><span id="chu-quote"></span></blockquote>
+    <p id="mo-ta-nguy-co"></p>
+    <p class="luu-y">Nếu bạn đang nghĩ đến việc làm hại bản thân, hãy nói ngay với một người bạn tin tưởng, người thân, thầy cô hoặc phòng tư vấn tâm lý của trường. Khi nguy hiểm khẩn cấp, hãy gọi <b>115</b>.</p>
+    <div class="chan-hop" id="nut-nguy-co"></div>
+  </div>
+</dialog>
+
+<dialog id="hop-dang-nhap" aria-labelledby="td-dang-nhap" data-giu-mo>
+  <div class="noi-dung-hop">
+    <div class="dau-hop"><h2 id="td-dang-nhap">Vào khu vườn của bạn</h2><button class="nut-dong" type="button" data-dong aria-label="Đóng">×</button></div>
+    <p id="gioi-thieu-dn" class="huong-dan" hidden></p>
+    <div class="tab-dn" role="tablist" id="tab-dn">
+      <button type="button" role="tab" id="tab-dang-nhap" aria-selected="true" aria-controls="form-dang-nhap">Đăng nhập</button>
+      <button type="button" role="tab" id="tab-dang-ky" aria-selected="false" aria-controls="form-dang-ky">Tạo tài khoản</button>
+    </div>
+
+    <form id="form-dang-nhap" role="tabpanel" aria-labelledby="tab-dang-nhap" novalidate style="display:flex;flex-direction:column;gap:16px">
+      <div class="truong">
+        <label for="dn-ten">Tên đăng nhập</label>
+        <input type="text" id="dn-ten" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24" aria-describedby="loi-dn-ten">
+        <span class="bao-loi" id="loi-dn-ten"></span>
+      </div>
+      <div class="truong">
+        <label for="dn-mk">Mật khẩu</label>
+        <div class="o-mat-khau"><input type="password" id="dn-mk" autocomplete="current-password" maxlength="72" aria-describedby="loi-dn-mk"><button type="button" data-hien-mk="dn-mk">Hiện</button></div>
+        <span class="bao-loi" id="loi-dn-mk"></span>
+      </div>
+      <span class="bao-loi" id="loi-dn" role="alert"></span>
+      <div class="chan-hop" style="justify-content:space-between;align-items:center">
+        <button class="nut-chu" type="button" id="nut-quen-mk">Quên mật khẩu?</button>
+        <button class="nut nut-chinh" type="submit" id="nut-dn">Đăng nhập</button>
+      </div>
+    </form>
+
+    <form id="form-dang-ky" role="tabpanel" aria-labelledby="tab-dang-ky" novalidate hidden style="display:flex;flex-direction:column;gap:16px">
+      <div class="truong">
+        <label for="dk-ten">Tên đăng nhập</label>
+        <input type="text" id="dk-ten" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24" placeholder="Ví dụ: mamxanh.chill" aria-describedby="hd-dk-ten loi-dk-ten">
+        <span class="huong-dan" id="hd-dk-ten">3 đến 24 ký tự: chữ thường không dấu, số, dấu chấm hoặc gạch dưới, bắt đầu bằng chữ. Đừng dùng tên thật hay mã số sinh viên.</span>
+        <span class="bao-loi" id="loi-dk-ten"></span>
+      </div>
+      <div class="truong">
+        <label for="dk-bd">Biệt danh</label>
+        <input type="text" id="dk-bd" maxlength="24" autocomplete="off" placeholder="Tên hiện trên Bảng ghim" aria-describedby="loi-dk-bd">
+        <div class="chon-goi-y" id="chip-dk"></div>
+        <span class="bao-loi" id="loi-dk-bd"></span>
+      </div>
+      <div class="truong">
+        <label for="dk-mk">Mật khẩu</label>
+        <div class="o-mat-khau"><input type="password" id="dk-mk" autocomplete="new-password" maxlength="72" aria-describedby="hd-dk-mk loi-dk-mk"><button type="button" data-hien-mk="dk-mk">Hiện</button></div>
+        <span class="huong-dan" id="hd-dk-mk">Ít nhất 8 ký tự. Đừng dùng lại mật khẩu email hay mạng xã hội.</span>
+        <span class="bao-loi" id="loi-dk-mk"></span>
+      </div>
+      <div class="truong">
+        <label for="dk-mk2">Nhập lại mật khẩu</label>
+        <input type="password" id="dk-mk2" autocomplete="new-password" maxlength="72" aria-describedby="loi-dk-mk2">
+        <span class="bao-loi" id="loi-dk-mk2"></span>
+      </div>
+      <label class="hop-kiem"><input type="checkbox" id="dk-dong-y"><span>Mình hiểu: khu vườn không có email khôi phục. Nếu quên cả mật khẩu lẫn mã khôi phục, tài khoản không lấy lại được.</span></label>
+      <span class="bao-loi" id="loi-dk" role="alert"></span>
+      <div class="chan-hop"><button class="nut nut-chinh" type="submit" id="nut-dk">Tạo tài khoản</button></div>
+    </form>
+
+    <form id="form-khoi-phuc" novalidate hidden style="display:flex;flex-direction:column;gap:16px">
+      <p>Nhập mã khôi phục bạn đã lưu khi tạo tài khoản để đặt mật khẩu mới.</p>
+      <div class="truong">
+        <label for="kp-ten">Tên đăng nhập</label>
+        <input type="text" id="kp-ten" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24">
+      </div>
+      <div class="truong">
+        <label for="kp-ma">Mã khôi phục</label>
+        <input type="text" id="kp-ma" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="XXXX-XXXX-XXXX-XXXX">
+      </div>
+      <div class="truong">
+        <label for="kp-mk">Mật khẩu mới</label>
+        <div class="o-mat-khau"><input type="password" id="kp-mk" autocomplete="new-password" maxlength="72"><button type="button" data-hien-mk="kp-mk">Hiện</button></div>
+        <span class="huong-dan">Ít nhất 8 ký tự.</span>
+      </div>
+      <span class="bao-loi" id="loi-kp" role="alert"></span>
+      <div class="chan-hop" style="justify-content:space-between;align-items:center">
+        <button class="nut-chu" type="button" id="nut-ve-dn">Quay lại đăng nhập</button>
+        <button class="nut nut-chinh" type="submit" id="nut-kp">Đặt mật khẩu mới</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="hop-ma-khoi-phuc" aria-labelledby="td-ma-khoi-phuc" data-giu-mo>
+  <div class="noi-dung-hop">
+    <div class="dau-hop"><h2 id="td-ma-khoi-phuc">Cất kỹ mã khôi phục này nhé</h2></div>
+    <p>Đây là cách <b>duy nhất</b> để đặt lại mật khẩu nếu bạn quên. Khu vườn chỉ hiện mã này một lần.</p>
+    <div class="o-khoi-phuc" id="chu-ma-khoi-phuc"></div>
+    <div class="hang-nut">
+      <button class="nut nut-phu" type="button" id="nut-chep-kp">Sao chép</button>
+      <button class="nut nut-phu" type="button" id="nut-tai-kp">Tải về máy</button>
+    </div>
+    <span class="huong-dan" id="tb-kp" role="status"></span>
+    <label class="hop-kiem"><input type="checkbox" id="da-luu-kp"><span>Mình đã lưu mã khôi phục ở một nơi an toàn.</span></label>
+    <div class="chan-hop"><button class="nut nut-chinh" type="button" id="nut-xong-kp" disabled>Vào khu vườn</button></div>
+  </div>
+</dialog>
+
+<dialog id="hop-tai-khoan" aria-labelledby="td-tai-khoan">
+  <div class="noi-dung-hop">
+    <div class="dau-hop"><h2 id="td-tai-khoan">Tài khoản của bạn</h2><button class="nut-dong" type="button" data-dong aria-label="Đóng">×</button></div>
+    <div class="the-tai-khoan">
+      <span class="anh-dai-dien lon" id="anh-tk-lon" aria-hidden="true"></span>
+      <div><b id="tk-biet-danh"></b><span id="tk-ten"></span></div>
+    </div>
+    <div class="lua-chon-tk">
+      <button class="nut nut-chinh" type="button" id="nut-tk-hop-thu"><svg aria-hidden="true" width="20" height="20"><use href="#i-hop"/></svg>Mở hòm thư của mình</button>
+      <button class="nut nut-phu" type="button" id="nut-tk-biet-danh">Đổi biệt danh</button>
+      <button class="nut nut-phu" type="button" id="nut-dang-xuat">Đăng xuất</button>
+    </div>
+    <details class="mo-rong">
+      <summary>Xóa tài khoản</summary>
+      <form id="form-xoa-tk" novalidate style="display:flex;flex-direction:column;gap:12px">
+        <p class="huong-dan">Tài khoản sẽ bị xóa vĩnh viễn. Các lá thư đã gửi sẽ được tách khỏi tài khoản và không còn hiện trong hòm thư.</p>
+        <div class="truong">
+          <label for="xoa-mk">Nhập mật khẩu để xác nhận</label>
+          <input type="password" id="xoa-mk" autocomplete="current-password" maxlength="72">
+        </div>
+        <span class="bao-loi" id="loi-xoa-tk" role="alert"></span>
+        <div><button class="nut nut-phu nut-nguy-hiem" type="submit" id="nut-xoa-tk">Xóa tài khoản vĩnh viễn</button></div>
+      </form>
+    </details>
+  </div>
+</dialog>
+
+<dialog id="hop-nhat-ky" class="rat-rong" aria-labelledby="td-nhat-ky">
+  <div class="noi-dung-hop">
+    <div class="dau-hop">
+      <div class="dau-nhat-ky"><span class="anh-dai-dien lon" id="anh-nhat-ky" aria-hidden="true"></span><div><h2 id="td-nhat-ky">Hòm thư của bạn</h2><p id="phu-de-nhat-ky">Những lá thư bạn đã cất và lời hồi đáp khu vườn gửi lại.</p></div></div>
+      <button class="nut-dong" type="button" data-dong aria-label="Đóng">×</button>
+    </div>
+    <div class="thong-ke" id="thong-ke-nhat-ky"></div>
+    <div class="loc" id="loc-nhat-ky" role="group" aria-label="Lọc thư"></div>
+    <ul class="dong-thoi-gian" id="ds-nhat-ky"></ul>
+    <section id="khoi-ghim-cua-ban" hidden>
+      <h3 style="margin-bottom:10px">Lời nhắn bạn đã ghim</h3>
+      <ul class="ds-ghim-cua-ban" id="ds-ghim-cua-ban"></ul>
+    </section>
+    <details class="mo-rong">
+      <summary>Có thư gửi trước khi đăng nhập? Cất vào hòm bằng mã thư</summary>
+      <form id="form-cat-ma" novalidate style="display:flex;flex-direction:column;gap:10px">
+        <div class="hang-nhap">
+          <label for="cat-ma" class="an-di">Mã thư</label>
+          <input type="text" id="cat-ma" maxlength="30" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Nhập mã thư cũ">
+          <button class="nut nut-phu" type="submit" id="nut-cat-ma">Cất vào hòm</button>
+        </div>
+        <span class="bao-loi" id="loi-cat-ma" role="alert"></span>
+      </form>
+    </details>
+    <div class="chan-hop">
+      <button class="nut nut-phu" type="button" id="nut-nk-viet">Cất thêm một lá thư</button>
+      <button class="nut nut-chinh" type="button" data-dong>Đóng hòm thư</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <dialog id="hop-rieng-tu" class="rong" aria-labelledby="td-rieng-tu-hop">
   <div class="noi-dung-hop chinh-sach">
@@ -674,10 +1222,20 @@ dialog[open]{animation:hien .25s ease-out}
         <li>Email, chỉ khi bạn tự nguyện điền và chọn muốn nhận phản hồi.</li>
         <li>Thời điểm gửi thư.</li>
         <li>Mã thư được lưu dưới dạng mã hóa một chiều, nên người quản lý bảng dữ liệu cũng không đọc được mã gốc của bạn.</li>
+        <li>Nếu bạn tạo tài khoản: tên đăng nhập, biệt danh, ngày tạo và lần đăng nhập gần nhất. Mật khẩu và mã khôi phục chỉ lưu dạng mã hóa một chiều.</li>
       </ul>
       <p>Khu vườn không hỏi họ tên, mã số sinh viên, số điện thoại và không dùng công cụ theo dõi người truy cập.</p>
     </section>
-    <section><h3>Biệt danh và Bảng ghim</h3><p>Biệt danh chỉ lưu trong trình duyệt của bạn, cho đến khi bạn ghim một lời nhắn. Lời nhắn trên Bảng ghim là <b>công khai</b>, hiện kèm biệt danh và ngày gửi sau khi nhóm duyệt. Đừng ghi tên thật, thông tin cá nhân hay chuyện riêng của người khác vào đó. Muốn kể chuyện riêng, hãy dùng Hòm thư tâm sự.</p></section>
+    <section><h3>Tài khoản và hòm thư</h3>
+      <ul>
+        <li>Thư bạn gửi khi đang đăng nhập được gắn với tài khoản để hiện lại trong hòm thư của bạn. Vì vậy nhóm có thể biết những lá thư nào đến từ cùng một tài khoản. Muốn ẩn danh hoàn toàn, hãy gửi thư khi chưa đăng nhập.</li>
+        <li>Trình duyệt này nhớ đăng nhập của bạn trong 30 ngày. Nếu dùng máy chung, hãy đăng xuất sau khi dùng.</li>
+        <li>Quên mật khẩu thì dùng mã khôi phục được cấp lúc tạo tài khoản. Mất cả hai thì khu vườn không thể lấy lại tài khoản giúp bạn.</li>
+        <li>Bạn có thể xóa tài khoản bất cứ lúc nào. Khi đó các lá thư sẽ được tách khỏi tài khoản và xử lý như thư ẩn danh.</li>
+      </ul>
+    </section>
+    <section><h3>Biệt danh và Bảng ghim</h3><p>Nếu không có tài khoản, biệt danh chỉ lưu trong trình duyệt của bạn, cho đến khi bạn ghim một lời nhắn. Lời nhắn trên Bảng ghim là <b>công khai</b>, hiện kèm biệt danh và ngày gửi sau khi nhóm duyệt. Đừng ghi tên thật, thông tin cá nhân hay chuyện riêng của người khác vào đó. Muốn kể chuyện riêng, hãy dùng Hòm thư tâm sự.</p></section>
+    <section><h3>Podcast và bài hát đính kèm</h3><p>Lời hồi đáp có thể kèm đường dẫn tới podcast hoặc bài hát trên YouTube, Spotify hay SoundCloud. Trình phát của các dịch vụ này chỉ được tải khi bạn bấm "Nghe tại đây", và khi đó dịch vụ đó có thể ghi nhận lượt truy cập theo chính sách riêng của họ.</p></section>
     <section><h3>Dữ liệu được lưu ở đâu</h3><p>Thư được lưu trong một bảng tính Google Sheets thuộc tài khoản Google của nhóm dự án. Khi bạn mở trang, trình duyệt cũng kết nối tới máy chủ của Google để tải phông chữ và gửi thư, nên Google có thể ghi nhận địa chỉ mạng của bạn theo chính sách riêng của Google.</p></section>
     <section><h3>Ai được đọc thư</h3><p>Chỉ những thành viên trong nhóm MindNest được cấp quyền truy cập bảng tính. Thư không bao giờ được đăng công khai hay chia sẻ cho bên ngoài nhóm.</p></section>
     <section><h3>Thư được lưu trong bao lâu</h3><p>Thư được lưu tối đa 12 tháng kể từ ngày gửi, sau đó nhóm sẽ xóa khỏi bảng tính.</p></section>
@@ -700,7 +1258,11 @@ dialog[open]{animation:hien .25s ease-out}
       <span class="huong-dan" id="hd-biet-danh">2 đến 24 ký tự, gồm chữ và số. Đừng dùng tên thật hay mã số sinh viên.</span>
       <span class="bao-loi" id="loi-biet-danh"></span>
     </div>
-    <p class="luu-y">Biệt danh chỉ được lưu trong trình duyệt này. Đổi máy hoặc xóa dữ liệu trình duyệt thì bạn tạo lại là được.</p>
+    <div class="truong">
+      <span style="font-weight:600;color:var(--la-dam);font-size:.95rem">Chọn nhanh một cái tên</span>
+      <div class="chon-goi-y" id="chip-biet-danh"></div>
+    </div>
+    <p class="luu-y" id="luu-y-biet-danh">Biệt danh chỉ được lưu trong trình duyệt này. Đổi máy hoặc xóa dữ liệu trình duyệt thì bạn tạo lại là được. Muốn giữ biệt danh ở mọi nơi, hãy tạo tài khoản.</p>
     <div class="chan-hop">
       <button class="nut nut-phu" type="button" id="nut-xoa-biet-danh" hidden>Xóa biệt danh</button>
       <button class="nut nut-chinh" type="submit">Lưu biệt danh</button>
@@ -748,6 +1310,31 @@ dialog[open]{animation:hien .25s ease-out}
   var URL_MAY_CHU = ((window.CAU_HINH || {}).APPS_SCRIPT_URL || '').trim();
   var XEM_THU = !URL_MAY_CHU;
   function $(id) { return document.getElementById(id); }
+  function giamChuyenDong() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  function cho(ms) { return new Promise(function (r) { setTimeout(r, giamChuyenDong() ? 0 : ms); }); }
+  function boQua() {}
+  function luuTam(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* trình duyệt chặn lưu */ } }
+  function docTam(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function taoPhanTu(the, lop, chu) {
+    var e = document.createElement(the);
+    if (lop) e.className = lop;
+    if (chu !== undefined && chu !== null) e.textContent = chu;
+    return e;
+  }
+  function taoNut(chu, lop, lam) {
+    var b = taoPhanTu('button', lop, chu);
+    b.type = 'button';
+    if (lam) b.addEventListener('click', lam);
+    return b;
+  }
+  function ngauNhien(n) { var s = new Uint32Array(1); window.crypto.getRandomValues(s); return s[0] % n; }
+
+  /* Ngày theo giờ Việt Nam: dùng để đổi lời nhắn và câu nói mỗi ngày */
+  function soNgay() { return Math.floor((Date.now() + 7 * 3600e3) / 864e5); }
+  function ngayHomNay() {
+    var d = new Date(Date.now() + 7 * 3600e3);
+    return ('0' + d.getUTCDate()).slice(-2) + '/' + ('0' + (d.getUTCMonth() + 1)).slice(-2);
+  }
 
   /* ---------- Chế độ xem thử ---------- */
   if (XEM_THU) {
@@ -756,15 +1343,25 @@ dialog[open]{animation:hien .25s ease-out}
     $('nhan-xem-thu-form').hidden = false;
   }
 
+  /* ---------- Thông báo nhỏ ---------- */
+  var henToast;
+  function toast(chu) {
+    var t = $('toast');
+    t.textContent = chu;
+    t.classList.add('hien');
+    clearTimeout(henToast);
+    henToast = setTimeout(function () { t.classList.remove('hien'); }, 3400);
+  }
+
   /* ---------- Thanh điều hướng ---------- */
   var thanhDh = $('thanh-dh'), nutMenu = $('nut-menu'), menu = $('menu-chinh');
+  function dongMenu() { menu.classList.remove('mo'); nutMenu.setAttribute('aria-expanded', 'false'); }
   nutMenu.addEventListener('click', function () {
+    dongBang();
     var mo = menu.classList.toggle('mo');
     nutMenu.setAttribute('aria-expanded', mo ? 'true' : 'false');
   });
-  menu.addEventListener('click', function (e) {
-    if (e.target.closest('a')) { menu.classList.remove('mo'); nutMenu.setAttribute('aria-expanded', 'false'); }
-  });
+  menu.addEventListener('click', function (e) { if (e.target.closest('a')) dongMenu(); });
   window.addEventListener('scroll', function () { thanhDh.classList.toggle('da-cuon', window.scrollY > 8); }, { passive: true });
 
   var cacVung = ['trang-chu', 'cam-xuc', 'loi-nhan', 'bang-ghim', 'hom-thu', 'tra-cuu'];
@@ -781,30 +1378,43 @@ dialog[open]{animation:hien .25s ease-out}
   }
 
   function cuonDen(id) {
-    var el = $(id);
-    var giam = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    el.scrollIntoView({ behavior: giam ? 'auto' : 'smooth', block: 'start' });
+    $(id).scrollIntoView({ behavior: giamChuyenDong() ? 'auto' : 'smooth', block: 'start' });
   }
 
   /* ---------- Cửa sổ bật lên ---------- */
-  function moHop(id) {
+  // chong = true: mở chồng lên cửa sổ đang mở (không đóng cửa sổ bên dưới)
+  function moHop(id, chong) {
     var h = $(id);
-    document.querySelectorAll('dialog[open]').forEach(function (d) { if (d !== h) d.close(); });
+    if (!chong) document.querySelectorAll('dialog[open]').forEach(function (d) { if (d !== h) dongHop(d); });
     if (!h.open) {
       if (typeof h.showModal === 'function') h.showModal(); else h.setAttribute('open', '');
     }
     return h;
   }
-  function dongHop(h) { if (typeof h.close === 'function') h.close(); else h.removeAttribute('open'); }
+  function dongHop(h) {
+    if (!h.open) return;
+    if (typeof h.close === 'function') h.close(); else h.removeAttribute('open');
+  }
 
   document.addEventListener('click', function (e) {
     var mo = e.target.closest('[data-mo]');
-    if (mo) { e.preventDefault(); moHop(mo.getAttribute('data-mo')); return; }
+    if (mo) {
+      e.preventDefault();
+      if (mo.getAttribute('data-mo') === 'hop-gui-thu') moFormThu(); else moHop(mo.getAttribute('data-mo'));
+      return;
+    }
     var dong = e.target.closest('[data-dong]');
-    if (dong) { dongHop(dong.closest('dialog')); }
+    if (dong) { dongHop(dong.closest('dialog')); return; }
+    var hienMk = e.target.closest('[data-hien-mk]');
+    if (hienMk) {
+      var o = $(hienMk.getAttribute('data-hien-mk'));
+      var hien = o.type === 'password';
+      o.type = hien ? 'text' : 'password';
+      hienMk.textContent = hien ? 'Ẩn' : 'Hiện';
+    }
   });
   document.querySelectorAll('dialog').forEach(function (h) {
-    if (h.hasAttribute('data-giu-mo')) return; // biểu mẫu thư: không đóng khi bấm ra ngoài, tránh mất chữ
+    if (h.hasAttribute('data-giu-mo')) return; // biểu mẫu: không đóng khi bấm ra ngoài, tránh mất chữ
     h.addEventListener('click', function (e) { if (e.target === h) dongHop(h); });
   });
 
@@ -814,14 +1424,12 @@ dialog[open]{animation:hien .25s ease-out}
     var khung = $('nut-thong-bao');
     khung.innerHTML = '';
     (cacNut || [{ chu: 'Đóng', chinh: true }]).forEach(function (n) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'nut ' + (n.chinh ? 'nut-chinh' : 'nut-phu');
-      b.textContent = n.chu;
-      b.addEventListener('click', function () { dongHop($('hop-thong-bao')); if (n.lam) n.lam(); });
-      khung.appendChild(b);
+      khung.appendChild(taoNut(n.chu, 'nut ' + (n.chinh ? 'nut-chinh' : 'nut-phu'), function () {
+        dongHop($('hop-thong-bao'));
+        if (n.lam) n.lam();
+      }));
     });
-    moHop('hop-thong-bao');
+    moHop('hop-thong-bao', true);
   }
 
   /* ---------- Khu vườn cảm xúc ---------- */
@@ -854,7 +1462,7 @@ dialog[open]{animation:hien .25s ease-out}
     cuonDen('hom-thu');
   });
 
-  /* ---------- Góc lời nhắn ---------- */
+  /* ---------- Góc lời nhắn: đổi mỗi ngày ---------- */
   var LOI_NHAN = [
     'Bạn không cần phải giỏi mọi thứ ngay từ lần đầu tiên.',
     'Mỗi người đều có một hành trình phát triển riêng.',
@@ -867,28 +1475,170 @@ dialog[open]{animation:hien .25s ease-out}
     'Cảm xúc nào cũng có lý do của nó. Bạn không cần phải vội xua đi.',
     'Bạn không cô đơn trong những điều mình đang trải qua.',
     'Hôm nay bạn đã làm được nhiều hơn bạn nghĩ.',
-    'Uống một ngụm nước, hít thở thật sâu, rồi mình đi tiếp từng bước nhé.'
+    'Uống một ngụm nước, hít thở thật sâu, rồi mình đi tiếp từng bước nhé.',
+    'Không cần hoàn hảo, chỉ cần hôm nay tốt hơn hôm qua một xíu thôi.',
+    'Deadline thì nhiều, nhưng bạn chỉ có một. Nhớ chăm cả bản thân nữa nha.',
+    'Bạn được phép tắt thông báo và sống chậm một buổi tối.',
+    'So sánh mình với khoảnh khắc đẹp nhất của người khác thì chẳng công bằng chút nào.',
+    'Điểm số là một con số, còn bạn là cả một câu chuyện.',
+    'Ngủ đủ giấc cũng là một cách tự thương mình.',
+    'Việc khó nhất hôm nay có khi chỉ là bắt đầu. Bắt đầu năm phút thôi cũng được.',
+    'Bạn đã từng vượt qua những ngày tưởng như không thể. Lần này cũng vậy.',
+    'Hỏi bài, nhờ giúp hay nói "mình đang không ổn" đều là những việc can đảm.',
+    'Khoe với bản thân một điều nhỏ bạn làm được hôm nay đi.',
+    'Năm nhất chông chênh là bình thường. Ai rồi cũng tìm được nhịp của mình.',
+    'Không phải ai cũng hiểu bạn, nhưng bạn vẫn xứng đáng được hiểu.',
+    'Một bữa ăn ngon, một bài nhạc hay, một giấc ngủ sâu: vậy là một ngày ổn rồi.',
+    'Mưa rồi sẽ tạnh, deadline rồi sẽ qua, và bạn sẽ lại cười.',
+    'Chậm mà chắc vẫn về đích, chạy vội mà kiệt sức thì không vui đâu.',
+    'Thất bại hôm nay là dữ liệu cho phiên bản xịn hơn của bạn ngày mai.',
+    'Bạn không cần phải gồng. Ở khu vườn này, mềm yếu một chút cũng được.',
+    'Một tin nhắn "cậu ổn không?" có thể làm ấm cả ngày của ai đó.',
+    'Mỗi chồi non đều cần thời gian. Bạn cũng vậy.',
+    'Đôi khi điều tử tế nhất bạn làm được là cho mình nghỉ ngơi.',
+    'Bạn là nhân vật chính trong câu chuyện của mình, kể cả ở những chương khó.',
+    'Không biết bắt đầu từ đâu? Bắt đầu từ việc dọn bàn học năm phút nhé.',
+    'Những điều bạn đang lo, nửa năm nữa có khi chỉ là chuyện để kể cười.',
+    'Ra ngoài hít chút nắng đi, khu vườn nói vậy đó.',
+    'Bạn đã cố gắng nhiều lắm rồi. Khu vườn thấy hết đó.',
+    'Mình không cần biết hết đường đi, chỉ cần thấy bước tiếp theo.',
+    'Được phép buồn, được phép mệt, và vẫn được phép tự hào về mình.',
+    'Hôm nay thử nói với bản thân một câu thật dễ thương xem sao.'
   ];
-  var tuiLoiNhan = [], loiDangHien = 0;
+  var loiHomNay = soNgay() % LOI_NHAN.length, loiDangHien = loiHomNay, tuiLoiNhan = [];
+  var oLoiNhan = $('loi-nhan-hien');
   function rutLoiNhan() {
     if (!tuiLoiNhan.length) {
       for (var i = 0; i < LOI_NHAN.length; i++) if (i !== loiDangHien) tuiLoiNhan.push(i);
-      for (var j = tuiLoiNhan.length - 1; j > 0; j--) { var k = Math.floor(Math.random() * (j + 1)); var t = tuiLoiNhan[j]; tuiLoiNhan[j] = tuiLoiNhan[k]; tuiLoiNhan[k] = t; }
+      for (var j = tuiLoiNhan.length - 1; j > 0; j--) { var k = ngauNhien(j + 1); var t = tuiLoiNhan[j]; tuiLoiNhan[j] = tuiLoiNhan[k]; tuiLoiNhan[k] = t; }
     }
     return tuiLoiNhan.pop();
   }
-  var oLoiNhan = $('loi-nhan-hien');
-  function hienSoLoiNhan() { $('so-loi-nhan').textContent = (loiDangHien + 1) + ' / ' + LOI_NHAN.length; }
-  hienSoLoiNhan();
+  function hienLoiNhan() {
+    oLoiNhan.textContent = LOI_NHAN[loiDangHien];
+    $('nhan-loi-nhan').textContent = loiDangHien === loiHomNay ? 'Lời nhắn hôm nay · ' + ngayHomNay() : 'Thêm một lời nhắn cho bạn';
+    $('so-loi-nhan').textContent = (loiDangHien + 1) + ' / ' + LOI_NHAN.length;
+  }
+  hienLoiNhan();
   $('nut-loi-nhan-khac').addEventListener('click', function () {
     loiDangHien = rutLoiNhan();
+    var giay = oLoiNhan.closest('.giay-nhan');
+    giay.classList.remove('lat'); void giay.offsetWidth; giay.classList.add('lat');
     oLoiNhan.classList.add('dang-doi');
-    setTimeout(function () {
-      oLoiNhan.textContent = LOI_NHAN[loiDangHien];
-      hienSoLoiNhan();
-      oLoiNhan.classList.remove('dang-doi');
-    }, 260);
+    setTimeout(function () { hienLoiNhan(); oLoiNhan.classList.remove('dang-doi'); }, 260);
   });
+
+  /* ---------- Từ ngữ nguy hiểm ---------- */
+  // Giống hệt danh sách trong Code.gs. So khớp trên chữ đã bỏ dấu, nên bắt được cả "muon chet", "ko muon song"...
+  var MAU_NGUY_CO = [
+    /\b(muon|mun|muong) (chet|die|chit)\b/, /\b(khong|ko|k|hok|hong|chang|cha) (muon|mun) song\b/,
+    /\btu (sat|lam hai)\b/, /\blam hai (ban )?than\b/, /\bket thuc cuoc (doi|song)\b/, /\bket lieu\b/,
+    /\brach (tay|co tay)\b/, /\bnhay (lau|cau)\b/, /\bbien mat mai mai\b/, /\bkhong thiet song\b/,
+    /\bchan song\b/, /\bchet (di|quach) cho (roi|xong)\b/, /\btam biet the gioi\b/,
+    /\bkhong con ly do (de )?song\b/, /\bkms\b/, /\bunalive\b/
+  ];
+  var QUOTE_NGAY = [
+    'Cơn bão nào rồi cũng tan, và bạn không phải đứng giữa nó một mình.',
+    'Bạn quan trọng hơn bạn nghĩ rất nhiều, kể cả trong những ngày bạn không thấy vậy.',
+    'Cảm xúc hôm nay rất thật, nhưng nó không phải là tất cả những gì bạn sẽ cảm thấy.',
+    'Nói ra điều khó nói đã là một bước rất can đảm rồi.',
+    'Đêm dài đến mấy thì bình minh vẫn đến.',
+    'Bạn xứng đáng được giúp đỡ, và xin giúp đỡ không phải là làm phiền ai cả.',
+    'Có những ngày chỉ cần thở thôi là đủ. Hôm nay hãy để mình chỉ cần thở.',
+    'Bạn không phải gánh mọi thứ một mình. Có người sẵn lòng lắng nghe bạn.',
+    'Hạt mầm nằm trong bóng tối rất lâu trước khi nhìn thấy mặt trời.',
+    'Nỗi đau có thể rất lớn, nhưng nó không định nghĩa con người bạn.',
+    'Một cuộc trò chuyện có thể làm mọi thứ nhẹ đi một chút. Hãy thử nhắn cho một người bạn tin.',
+    'Bạn đã đi qua được tất cả những ngày tệ nhất của mình cho đến bây giờ.',
+    'Ngày mai vẫn còn những điều tốt đẹp bạn chưa kịp gặp.',
+    'Dừng lại một nhịp, hít vào thật chậm, thở ra thật dài. Khu vườn vẫn ở đây.'
+  ];
+  function boDauViTri(s) {
+    var chu = '', vt = [];
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charAt(i).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+      for (var j = 0; j < c.length; j++) { chu += c.charAt(j); vt.push(i); }
+    }
+    return { chu: chu, vt: vt };
+  }
+  /** Trả về { cum, batDau, ketThuc } của cụm từ nguy hiểm đầu tiên, hoặc null. */
+  function timNguyCo(s) {
+    s = String(s || '');
+    var b = boDauViTri(s), kq = null, m;
+    MAU_NGUY_CO.forEach(function (mau) {
+      var r = mau.exec(b.chu);
+      if (r && (!kq || r.index < kq.i)) kq = { i: r.index, n: r[0].length };
+    });
+    // "tu tu" không dấu trùng với "từ từ": chỉ tính khi viết "tự tử" hoặc cả đoạn không có dấu
+    var khongDau = b.chu === s.toLowerCase(), rTu = /\btu tu\b/g;
+    while ((m = rTu.exec(b.chu))) {
+      var goc = s.slice(b.vt[m.index], b.vt[m.index + m[0].length - 1] + 1).toLowerCase().normalize('NFC');
+      if (khongDau || goc === 'tự tử') { if (!kq || m.index < kq.i) kq = { i: m.index, n: m[0].length }; break; }
+    }
+    if (!kq) return null;
+    var dau = b.vt[kq.i], cuoi = b.vt[kq.i + kq.n - 1] + 1;
+    return { cum: s.slice(dau, cuoi), batDau: dau, ketThuc: cuoi };
+  }
+
+  var nguCanhNguyCo = null;
+  // loai: 'thu' (đang viết thư), 'thu-gui' (bấm gửi thư), 'ghim' (Bảng ghim, bắt buộc sửa)
+  function moNguyCo(loai, nc, o) {
+    nguCanhNguyCo = { o: o, nc: nc };
+    $('ngay-quote').textContent = 'Câu nói của hôm nay · ' + ngayHomNay();
+    $('chu-quote').textContent = QUOTE_NGAY[soNgay() % QUOTE_NGAY.length];
+    var mt = $('mo-ta-nguy-co');
+    mt.innerHTML = '';
+    mt.appendChild(document.createTextNode('Khu vườn thấy bạn vừa viết '));
+    mt.appendChild(taoPhanTu('span', 'tu-khoa', nc.cum));
+    mt.appendChild(document.createTextNode(loai === 'ghim'
+      ? '. Bảng ghim là nơi công khai, nên bạn cần sửa lại cụm từ này rồi mới ghim được nhé. Nếu đó là điều bạn đang thật sự nghĩ, hãy kể riêng với khu vườn qua Hòm thư tâm sự.'
+      : '. Bạn có muốn dừng lại một chút và viết lại phần được bôi đen không? Nếu đó là điều bạn đang thật sự cảm thấy, bạn vẫn có thể gửi thư, nhóm sẽ ưu tiên đọc thư của bạn. Nhưng lời hồi đáp có thể mất vài ngày, nên nếu bạn đang gặp nguy hiểm, đừng chờ thư mà hãy tìm người giúp ngay.'));
+    var khung = $('nut-nguy-co');
+    khung.innerHTML = '';
+    if (loai === 'thu-gui') {
+      khung.appendChild(taoNut('Mình vẫn muốn gửi thư này', 'nut nut-phu', function () {
+        nguCanhNguyCo = null;
+        daDongYGuiNguyCo = true;
+        dongHop($('hop-nguy-co'));
+        if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.dispatchEvent(new Event('submit', { cancelable: true }));
+      }));
+    }
+    if (loai === 'ghim') {
+      khung.appendChild(taoNut('Kể riêng qua Hòm thư', 'nut nut-phu', function () {
+        nguCanhNguyCo = null;
+        if (!oNoiDung.value.trim()) { oNoiDung.value = oGhim.value; oNoiDung.dispatchEvent(new Event('input')); }
+        dongHop($('hop-nguy-co'));
+        moFormThu();
+      }));
+    }
+    khung.appendChild(taoNut(loai === 'ghim' ? 'Mình sẽ sửa lại' : 'Mình sẽ viết lại', 'nut nut-chinh', dongNguyCo));
+    moHop('hop-nguy-co', true);
+  }
+  // Đóng hộp quote và bôi đen cụm từ để người viết sửa lại
+  function dongNguyCo() {
+    var c = nguCanhNguyCo;
+    nguCanhNguyCo = null;
+    dongHop($('hop-nguy-co'));
+    if (!c || !c.o) return;
+    c.o.focus();
+    try { c.o.setSelectionRange(c.nc.batDau, c.nc.ketThuc); } catch (e) { /* ô nhập không hỗ trợ bôi đen */ }
+  }
+  $('nut-dong-nguy-co').addEventListener('click', dongNguyCo);
+  $('hop-nguy-co').addEventListener('cancel', function (e) { e.preventDefault(); dongNguyCo(); });
+  function theoDoiNguyCo(o, loai, oNhac) {
+    var hen, daBao = '';
+    o.addEventListener('input', function () {
+      clearTimeout(hen);
+      hen = setTimeout(function () {
+        var nc = timNguyCo(o.value);
+        if (oNhac) oNhac.hidden = !nc;
+        if (!nc) { daBao = ''; return; }
+        var khoa = boDauViTri(nc.cum).chu;
+        if (khoa !== daBao && !$('hop-nguy-co').open && o.closest('dialog').open) { daBao = khoa; moNguyCo(loai, nc, o); }
+      }, 900);
+    });
+    return function datLai() { clearTimeout(hen); daBao = ''; if (oNhac) oNhac.hidden = true; };
+  }
 
   /* ---------- Kết nối máy chủ (Google Apps Script) ---------- */
   function goiMayChu(duLieu) {
@@ -904,6 +1654,436 @@ dialog[open]{animation:hien .25s ease-out}
       return r.json();
     }).finally(function () { clearTimeout(hen); });
   }
+
+  /* ---------- Phiên đăng nhập ---------- */
+  var KHOA_PHIEN = 'mindnest-phien', phien = null, hopThu = null;
+  try { phien = JSON.parse(docTam(KHOA_PHIEN) || 'null'); } catch (e) { phien = null; }
+  if (!phien || !phien.token || !phien.ten || !(Number(String(phien.token).split('.')[2]) > Date.now())) {
+    phien = null;
+    luuTam(KHOA_PHIEN, null);
+  }
+  function datPhien(p) {
+    phien = p;
+    hopThu = p ? { thu: [], ghim: [], chuaTai: true } : null;
+    luuTam(KHOA_PHIEN, p ? JSON.stringify(p) : null);
+    capNhatGiaoDienTk();
+    capNhatThongBao();
+  }
+  function hetPhien() {
+    datPhien(null);
+    thongBao('Phiên đăng nhập đã hết hạn', 'Bạn đăng nhập lại để tiếp tục dùng hòm thư nhé.',
+      [{ chu: 'Để sau' }, { chu: 'Đăng nhập', chinh: true, lam: function () { moDangNhap(); } }]);
+  }
+
+  var MAU_AVATAR = ['#C93F6E', '#536B56', '#7A5CCB', '#B5651D', '#2F7FA8', '#3E8E50'];
+  function veAnhDaiDien(el, ten) {
+    el.innerHTML = '';
+    if (!ten) {
+      el.style.background = '';
+      el.innerHTML = '<svg style="color:var(--la-dam)"><use href="#i-nguoi"/></svg>';
+      return;
+    }
+    var h = 0;
+    for (var i = 0; i < ten.length; i++) h = (h * 31 + ten.charCodeAt(i)) >>> 0;
+    el.style.background = MAU_AVATAR[h % MAU_AVATAR.length];
+    el.textContent = Array.from(ten)[0].toUpperCase();
+  }
+
+  function layBietDanh() { return phien ? phien.bietDanh : bietDanhKhach; }
+
+  function capNhatGiaoDienTk() {
+    var bd = layBietDanh();
+    veAnhDaiDien($('anh-dai-dien'), phien ? phien.bietDanh : '');
+    $('chu-tai-khoan').textContent = phien ? phien.bietDanh : 'Đăng nhập';
+    $('nut-tai-khoan').setAttribute('aria-label', phien ? 'Tài khoản của ' + phien.bietDanh : 'Đăng nhập hoặc tạo tài khoản');
+    $('ky-ten-ghim').textContent = bd;
+    $('nut-xoa-biet-danh').hidden = !!phien || !bietDanhKhach;
+
+    var gc = $('ghi-chu-tk-thu');
+    gc.innerHTML = '';
+    if (phien) {
+      gc.appendChild(document.createTextNode('Bạn đang đăng nhập với tên @' + phien.ten + '. Lá thư sẽ được cất vào hòm thư của bạn để đọc lại bất cứ lúc nào.'));
+    } else {
+      gc.appendChild(document.createTextNode('Bạn đang gửi ẩn danh, hãy giữ kỹ mã thư để tra cứu lời hồi đáp. '));
+      if (!XEM_THU) gc.appendChild(taoNut('Đăng nhập để thư nằm trong hòm thư', 'nut-chu', function () {
+        moDangNhap('Đăng nhập xong, bạn viết tiếp lá thư đang dở nhé. Nội dung vẫn còn nguyên.', moFormThu);
+      }));
+    }
+  }
+
+  /* ---------- Đếm thư, biểu tượng thông báo, trạng thái hòm thư ---------- */
+  var hopVuon = $('hop-vuon');
+  function khoaDaDoc() { return 'mindnest-da-doc-' + (phien ? phien.ten : ''); }
+  function dsDaDoc() {
+    try { var v = JSON.parse(docTam(khoaDaDoc()) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+  }
+  function dauVan(t) { return t.id + '|' + t.phanHoi.length + '.' + t.podcast.length + '.' + t.baiHat.length; }
+  function demThu() {
+    if (!phien || !hopThu) return { gui: 0, nhan: 0, moi: 0 };
+    var daDoc = dsDaDoc(), nhan = 0, moi = 0;
+    hopThu.thu.forEach(function (t) {
+      if (!t.daPhanHoi) return;
+      nhan++;
+      if (daDoc.indexOf(dauVan(t)) < 0) moi++;
+    });
+    return { gui: hopThu.thu.length, nhan: nhan, moi: moi };
+  }
+  function danhDauDaDoc() {
+    if (!phien || !hopThu) return;
+    var ds = hopThu.thu.filter(function (t) { return t.daPhanHoi; }).map(dauVan);
+    luuTam(khoaDaDoc(), JSON.stringify(ds.slice(0, 500)));
+    capNhatThongBao();
+  }
+
+  function capNhatThongBao() {
+    var so = demThu();
+    var hh = $('huy-hieu');
+    hh.hidden = !so.moi;
+    hh.textContent = so.moi > 9 ? '9+' : String(so.moi);
+    $('nut-thong-bao-thu').setAttribute('aria-label', phien
+      ? 'Thư của bạn: đã gửi ' + so.gui + ' thư, đã nhận ' + so.nhan + ' hồi đáp' + (so.moi ? ', có ' + so.moi + ' hồi đáp mới' : '')
+      : 'Thư của bạn');
+    hopVuon.classList.toggle('co-thu-moi', so.moi > 0);
+    $('chu-bong-bao').textContent = so.moi + ' hồi đáp mới!';
+    hopVuon.setAttribute('data-so-thu', String(Math.min(3, so.gui)));
+
+    var tt = $('trang-thai-vuon');
+    tt.innerHTML = '';
+    if (!phien) {
+      tt.appendChild(document.createTextNode('Muốn hòm thư nhớ giúp mọi lá thư đã gửi và nhận? '));
+      tt.appendChild(taoNut('Đăng nhập', 'nut-chu', function () { moDangNhap(); }));
+    } else if (hopThu && hopThu.chuaTai) {
+      tt.textContent = 'Đang mở hòm thư của ' + phien.bietDanh + '…';
+    } else {
+      tt.textContent = 'Hòm thư của ' + phien.bietDanh + ' đang giữ ' + so.gui + ' lá thư · ' + so.nhan + ' hồi đáp' + (so.moi ? ' · ' + so.moi + ' mới' : '');
+    }
+    if (!$('bang-thong-bao').hidden) veBangThongBao();
+  }
+
+  var dangTai = null;
+  function taiHopThu() {
+    if (!phien) return Promise.reject('chua_dang_nhap');
+    if (dangTai) return dangTai;
+    var tokenLuc = phien.token;
+    dangTai = goiMayChu({ hanhDong: 'hopthu', token: tokenLuc }).then(function (kq) {
+      if (!phien || phien.token !== tokenLuc) throw 'doi_phien';
+      if (!kq || !kq.ok) {
+        if (kq && kq.loi === 'phien') hetPhien();
+        throw (kq && kq.loi) || 'loi';
+      }
+      hopThu = { thu: kq.thu || [], ghim: kq.ghim || [] };
+      if (kq.taiKhoan && kq.taiKhoan.bietDanh && kq.taiKhoan.bietDanh !== phien.bietDanh) {
+        phien.bietDanh = kq.taiKhoan.bietDanh;
+        luuTam(KHOA_PHIEN, JSON.stringify(phien));
+        capNhatGiaoDienTk();
+      }
+      capNhatThongBao();
+      if ($('hop-nhat-ky').open) veNhatKy();
+      return hopThu;
+    });
+    dangTai.then(boQua, boQua).then(function () { dangTai = null; });
+    return dangTai;
+  }
+
+  /* Bảng nhỏ khi bấm biểu tượng thư */
+  var bang = $('bang-thong-bao'), nutBang = $('nut-thong-bao-thu');
+  function dongBang() { bang.hidden = true; nutBang.setAttribute('aria-expanded', 'false'); }
+  function veBangThongBao() {
+    bang.innerHTML = '';
+    if (!phien) {
+      bang.appendChild(taoPhanTu('h3', null, 'Thư của bạn'));
+      bang.appendChild(taoPhanTu('p', null, 'Đăng nhập để biểu tượng này đếm giúp bạn số thư đã gửi và số lời hồi đáp nhận được.'));
+      var hn = taoPhanTu('div', 'hang-nut');
+      hn.appendChild(taoNut('Đăng nhập', 'nut nut-chinh', function () { dongBang(); moDangNhap(); }));
+      hn.appendChild(taoNut('Tra cứu bằng mã', 'nut nut-phu', function () { dongBang(); cuonDen('tra-cuu'); }));
+      bang.appendChild(hn);
+      return;
+    }
+    var so = demThu();
+    bang.appendChild(taoPhanTu('h3', null, 'Hòm thư của ' + phien.bietDanh));
+    var o = taoPhanTu('div', 'o-so');
+    [[so.gui, 'Thư đã gửi'], [so.nhan, 'Hồi đáp đã nhận']].forEach(function (x) {
+      var d = taoPhanTu('div');
+      d.appendChild(taoPhanTu('b', null, hopThu && hopThu.chuaTai ? '…' : String(x[0])));
+      d.appendChild(taoPhanTu('span', null, x[1]));
+      o.appendChild(d);
+    });
+    bang.appendChild(o);
+    if (so.moi) bang.appendChild(taoPhanTu('p', 'dong-moi', 'Bạn có ' + so.moi + ' lời hồi đáp mới đang chờ đọc.'));
+    bang.appendChild(taoNut('Mở hòm thư', 'nut nut-chinh', function () { dongBang(); layThu(); }));
+  }
+  nutBang.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (!bang.hidden) { dongBang(); return; }
+    dongMenu();
+    veBangThongBao();
+    bang.hidden = false;
+    nutBang.setAttribute('aria-expanded', 'true');
+    if (phien && hopThu && hopThu.chuaTai) taiHopThu().catch(boQua);
+  });
+  document.addEventListener('click', function (e) {
+    if (!bang.hidden && !bang.contains(e.target) && e.target !== nutBang) dongBang();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !bang.hidden) { dongBang(); nutBang.focus(); } });
+
+  /* ---------- Hòm thư trong khu vườn: Cất thư và Lấy thư ---------- */
+  var dangHoatCanh = false;
+  function datLop(lop, bat) { hopVuon.classList.toggle(lop, bat); }
+  function chayLai(lop) { hopVuon.classList.remove(lop); void hopVuon.getBoundingClientRect(); hopVuon.classList.add(lop); }
+  function trongTamNhin(el) { var r = el.getBoundingClientRect(); return r.top < innerHeight * 0.75 && r.bottom > innerHeight * 0.35; }
+  function denVuon() {
+    if (trongTamNhin(hopVuon)) return Promise.resolve();
+    cuonDen('hom-thu');
+    return cho(700);
+  }
+
+  function moFormThu() {
+    capNhatGiaoDienTk();
+    if (phien && !oMa.value) oMa.value = taoMaNgauNhien(); // có tài khoản: tạo sẵn mã cho đỡ phải nghĩ
+    moHop('hop-gui-thu');
+    oNoiDung.focus();
+  }
+  $('nut-cat-thu').addEventListener('click', function () {
+    chayLai('lac');
+    datLop('mo-cua', true);
+    cho(420).then(moFormThu);
+  });
+  $('hop-gui-thu').addEventListener('close', function () { if (!dangHoatCanh) datLop('mo-cua', false); });
+
+  function hoatCanhCatThu() {
+    dangHoatCanh = true;
+    if (giamChuyenDong()) { dangHoatCanh = false; datLop('mo-cua', false); return Promise.resolve(); }
+    return denVuon()
+      .then(function () { datLop('mo-cua', true); chayLai('dang-cat'); return cho(1050); })
+      .then(function () { datLop('mo-cua', false); chayLai('lap-lanh-on'); chayLai('lac'); return cho(850); })
+      .then(function () { datLop('dang-cat', false); datLop('lap-lanh-on', false); dangHoatCanh = false; });
+  }
+
+  function layThu() {
+    if (XEM_THU) {
+      thongBao('Hòm thư chưa được kết nối', 'Ở chế độ xem thử chưa có tài khoản nên hòm thư chưa mở được. Bạn có thể thử mục Tra cứu thư với mã mẫu nhé.');
+      return;
+    }
+    if (!phien) {
+      moDangNhap('Đăng nhập để mở hòm thư và đọc lại những lá thư của bạn. Nếu bạn đã gửi thư ẩn danh, hãy dùng mục Tra cứu thư với mã thư.', layThu);
+      return;
+    }
+    var nut = $('nut-lay-thu');
+    nut.disabled = true;
+    denVuon().then(function () {
+      chayLai('lac');
+      datLop('mo-cua', true);
+      chayLai('dang-lay');
+      return Promise.all([taiHopThu(), cho(1150)]);
+    }).then(function () {
+      moNhatKy();
+    }, function (loi) {
+      if (loi === 'phien' || loi === 'doi_phien') return;
+      thongBao('Hòm thư chưa mở được', loi === 'qua_tai'
+        ? 'Khu vườn đang có nhiều người ghé cùng lúc. Bạn đợi một phút rồi thử lại nhé.'
+        : 'Chưa kết nối được với khu vườn. Bạn kiểm tra mạng rồi thử lại nhé.');
+    }).then(function () {
+      nut.disabled = false;
+      datLop('dang-lay', false);
+      datLop('mo-cua', false);
+    });
+  }
+  $('nut-lay-thu').addEventListener('click', layThu);
+
+  /* ---------- Podcast và bài hát đính kèm ---------- */
+  function phanTichLienKet(url) {
+    var u;
+    try { u = new URL(String(url || '')); } catch (e) { return null; }
+    if (u.protocol !== 'https:') return null;
+    var h = u.hostname.toLowerCase().replace(/^(www|m)\./, ''), kq = { href: u.href, ten: h, nhung: '', cao: 0, video: false };
+    if (h === 'youtube.com' || h === 'music.youtube.com' || h === 'youtu.be') {
+      var id = h === 'youtu.be' ? u.pathname.slice(1).split('/')[0]
+        : (u.searchParams.get('v') || (u.pathname.match(/^\/(?:shorts|embed|live)\/([\w-]{11})/) || [])[1]);
+      if (id && /^[\w-]{11}$/.test(id)) { kq.nhung = 'https://www.youtube-nocookie.com/embed/' + id; kq.video = true; }
+      kq.ten = 'YouTube';
+    } else if (h === 'open.spotify.com') {
+      var m = u.pathname.match(/^\/(?:intl-[a-z-]+\/)?(track|episode|show|playlist|album)\/([A-Za-z0-9]+)/);
+      if (m) { kq.nhung = 'https://open.spotify.com/embed/' + m[1] + '/' + m[2]; kq.cao = (m[1] === 'track' || m[1] === 'episode') ? 152 : 352; }
+      kq.ten = 'Spotify';
+    } else if (h === 'soundcloud.com') {
+      kq.nhung = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(u.href) + '&color=%23c93f6e&visual=false&show_comments=false';
+      kq.cao = 166;
+      kq.ten = 'SoundCloud';
+    }
+    return kq;
+  }
+  function taoTheNghe(url, loai) {
+    var t = phanTichLienKet(url);
+    if (!t) return null;
+    var the = taoPhanTu('div', 'the-nghe');
+    var hang = taoPhanTu('div', 'hang');
+    var bt = taoPhanTu('span', 'bt');
+    bt.innerHTML = loai === 'podcast' ? '<svg aria-hidden="true"><use href="#i-mic"/></svg>' : '<svg aria-hidden="true"><use href="#i-nhac"/></svg>';
+    hang.appendChild(bt);
+    var chu = taoPhanTu('span', 'chu-the');
+    chu.appendChild(taoPhanTu('b', null, loai === 'podcast' ? 'Một podcast dành cho bạn' : 'Một bài hát dành cho bạn'));
+    chu.appendChild(taoPhanTu('span', null, 'Trên ' + t.ten));
+    hang.appendChild(chu);
+    if (t.nhung) {
+      var nutNghe = taoNut('Nghe tại đây', 'nut nut-chinh', function () {
+        var f = document.createElement('iframe');
+        f.src = t.nhung;
+        f.title = (loai === 'podcast' ? 'Podcast' : 'Bài hát') + ' trên ' + t.ten;
+        f.loading = 'lazy';
+        f.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+        f.referrerPolicy = 'strict-origin-when-cross-origin';
+        if (t.video) f.className = 'video'; else f.height = String(t.cao);
+        nutNghe.remove();
+        the.appendChild(f);
+      });
+      hang.appendChild(nutNghe);
+    }
+    var a = taoPhanTu('a', 'nut nut-phu', 'Mở ' + t.ten);
+    a.href = t.href;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    hang.appendChild(a);
+    the.appendChild(hang);
+    if (t.nhung) the.appendChild(taoPhanTu('span', 'nho', 'Trình phát chỉ tải khi bạn bấm "Nghe tại đây".'));
+    return the;
+  }
+  function themDinhKem(khung, podcast, baiHat) {
+    var a = taoTheNghe(podcast, 'podcast'), b = taoTheNghe(baiHat, 'bai-hat');
+    if (a) khung.appendChild(a);
+    if (b) khung.appendChild(b);
+    return !!(a || b);
+  }
+
+  /* ---------- Nhật ký hòm thư ---------- */
+  var locNhatKy = 'tat-ca', moiLanMo = {};
+  function moNhatKy() {
+    if (!phien || !hopThu) return;
+    var daDoc = dsDaDoc();
+    moiLanMo = {};
+    hopThu.thu.forEach(function (t) { if (t.daPhanHoi && daDoc.indexOf(dauVan(t)) < 0) moiLanMo[t.id] = 1; });
+    locNhatKy = 'tat-ca';
+    veNhatKy();
+    moHop('hop-nhat-ky');
+    danhDauDaDoc();
+  }
+  function taoMucThu(t) {
+    var li = taoPhanTu('li', 'muc-thu');
+    var dau = taoPhanTu('div', 'dau');
+    var trai = taoPhanTu('span');
+    trai.appendChild(taoPhanTu('span', 'the-nho', t.chuDe || 'Thư'));
+    trai.appendChild(document.createTextNode('  ' + t.ngay));
+    dau.appendChild(trai);
+    var moi = !!moiLanMo[t.id];
+    dau.appendChild(t.daPhanHoi
+      ? taoPhanTu('span', 'the-nho ' + (moi ? 'moi' : 'vang'), moi ? 'Hồi đáp mới' : 'Đã có hồi đáp')
+      : taoPhanTu('span', 'the-nho cho', t.canPhanHoi ? 'Đang chờ hồi đáp' : 'Chỉ chia sẻ'));
+    li.appendChild(dau);
+
+    var dai = t.noiDung.length > 240 || (t.noiDung.match(/\n/g) || []).length > 3;
+    var nd = taoPhanTu('p', 'noi-dung-gui' + (dai ? ' rut-gon' : ''), t.noiDung);
+    li.appendChild(nd);
+    if (dai) {
+      var nutDoc = taoNut('Đọc cả thư', 'nut-chu', function () {
+        var gon = nd.classList.toggle('rut-gon');
+        nutDoc.textContent = gon ? 'Đọc cả thư' : 'Thu gọn';
+      });
+      var boc = taoPhanTu('div');
+      boc.appendChild(nutDoc);
+      li.appendChild(boc);
+    }
+
+    if (t.daPhanHoi) {
+      var khoi = taoPhanTu('div', 'khoi-hoi-dap');
+      khoi.appendChild(taoPhanTu('b', null, 'Khu vườn hồi đáp' + (t.ngayPhanHoi ? ' · ' + t.ngayPhanHoi : '')));
+      if (t.phanHoi) khoi.appendChild(taoPhanTu('p', null, t.phanHoi));
+      var dk = taoPhanTu('div', 'dinh-kem');
+      if (themDinhKem(dk, t.podcast, t.baiHat)) khoi.appendChild(dk);
+      li.appendChild(khoi);
+    } else {
+      li.appendChild(taoPhanTu('p', 'ghi-chu-thu', t.canPhanHoi
+        ? 'Khu vườn đã nhận thư và đang chuẩn bị lời hồi đáp cho bạn.'
+        : 'Bạn chọn chỉ chia sẻ. Khu vườn đã nhận và trân trọng lá thư này.'));
+    }
+    return li;
+  }
+  function veNhatKy() {
+    if (!phien || !hopThu) return;
+    veAnhDaiDien($('anh-nhat-ky'), phien.bietDanh);
+    $('td-nhat-ky').textContent = 'Hòm thư của ' + phien.bietDanh;
+    var thu = hopThu.thu, nhan = thu.filter(function (t) { return t.daPhanHoi; }).length;
+
+    var tk = $('thong-ke-nhat-ky');
+    tk.innerHTML = '';
+    [[thu.length, 'thư đã gửi'], [nhan, 'hồi đáp đã nhận'], [hopThu.ghim.length, 'lời nhắn đã ghim']].forEach(function (x) {
+      var d = taoPhanTu('div');
+      d.appendChild(taoPhanTu('b', null, String(x[0])));
+      d.appendChild(taoPhanTu('span', null, x[1]));
+      tk.appendChild(d);
+    });
+
+    var loc = $('loc-nhat-ky');
+    loc.innerHTML = '';
+    [['tat-ca', 'Tất cả', thu.length], ['co-hoi-dap', 'Có hồi đáp', nhan], ['dang-cho', 'Chưa có hồi đáp', thu.length - nhan]].forEach(function (x) {
+      var b = taoNut(x[1] + ' (' + x[2] + ')', null, function () { locNhatKy = x[0]; veNhatKy(); });
+      b.setAttribute('aria-pressed', locNhatKy === x[0] ? 'true' : 'false');
+      loc.appendChild(b);
+    });
+
+    var ds = $('ds-nhat-ky');
+    ds.innerHTML = '';
+    var loc1 = thu.filter(function (t) {
+      return locNhatKy === 'tat-ca' || (locNhatKy === 'co-hoi-dap' ? t.daPhanHoi : !t.daPhanHoi);
+    });
+    if (!loc1.length) {
+      var trong = taoPhanTu('li', 'trong-hop');
+      trong.appendChild(taoPhanTu('p', null, thu.length
+        ? 'Chưa có lá thư nào trong mục này.'
+        : 'Hòm thư còn trống. Lá thư đầu tiên bạn cất sẽ nằm ở đây, cùng lời hồi đáp khu vườn gửi lại.'));
+      if (!thu.length) trong.appendChild(taoNut('Cất lá thư đầu tiên', 'nut nut-chinh', function () { dongHop($('hop-nhat-ky')); moFormThu(); }));
+      ds.appendChild(trong);
+    } else {
+      loc1.forEach(function (t) { ds.appendChild(taoMucThu(t)); });
+    }
+
+    var dsg = $('ds-ghim-cua-ban');
+    dsg.innerHTML = '';
+    $('khoi-ghim-cua-ban').hidden = !hopThu.ghim.length;
+    var NHAN_GHIM = { da_len_bang: ['Đã lên bảng', 'the-nho'], cho_duyet: ['Đang chờ duyệt', 'the-nho cho'], khong_duyet: ['Chưa phù hợp để ghim', 'the-nho cho'] };
+    hopThu.ghim.forEach(function (g) {
+      var li = taoPhanTu('li');
+      li.appendChild(taoPhanTu('p', null, g.loiNhan));
+      var n = NHAN_GHIM[g.trangThai] || NHAN_GHIM.cho_duyet;
+      var ben = taoPhanTu('span');
+      ben.appendChild(taoPhanTu('span', n[1], n[0]));
+      ben.appendChild(document.createTextNode(' ' + g.ngay));
+      li.appendChild(ben);
+      dsg.appendChild(li);
+    });
+  }
+  $('nut-nk-viet').addEventListener('click', function () { dongHop($('hop-nhat-ky')); moFormThu(); });
+
+  function catBangMa(ma) {
+    return goiMayChu({ hanhDong: 'catthu', token: phien.token, ma: ma }).then(function (kq) {
+      if (kq && kq.ok) {
+        toast(kq.daCo ? 'Lá thư này đã có trong hòm thư của bạn rồi.' : 'Đã cất lá thư vào hòm thư của bạn!');
+        taiHopThu().catch(boQua);
+        return true;
+      }
+      if (kq && kq.loi === 'phien') hetPhien();
+      throw (kq && kq.loi) || 'loi';
+    });
+  }
+  $('form-cat-ma').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var o = $('cat-ma'), ma = chuanHoaMa(o.value), nut = $('nut-cat-ma');
+    if (!/^[A-Z0-9]{10,30}$/.test(ma)) { datLoi(o, 'loi-cat-ma', 'Mã thư gồm 10 đến 30 chữ cái và chữ số.'); return; }
+    xoaLoi(o, 'loi-cat-ma');
+    nut.disabled = true;
+    catBangMa(ma).then(function () { o.value = ''; }, function (loi) {
+      if (loi === 'phien') return;
+      datLoi(o, 'loi-cat-ma', loi === 'khong_tim_thay' ? 'Không tìm thấy lá thư có mã này.' : (loi === 'qua_tai' ? 'Khu vườn đang bận, bạn thử lại sau một phút nhé.' : 'Chưa cất được, bạn thử lại nhé.'));
+    }).then(function () { nut.disabled = false; });
+  });
 
   /* ---------- Mã thư ---------- */
   function chuanHoaMa(s) { return String(s || '').trim().toUpperCase(); }
@@ -928,11 +2108,11 @@ dialog[open]{animation:hien .25s ease-out}
 
   /* ---------- Biểu mẫu gửi thư ---------- */
   var form = $('form-gui-thu'), oNoiDung = $('noi-dung-thu'), oMa = $('ma-thu'), oEmail = $('email');
-  var TU_KHOA_NGUY_CO = /(tự tử|tự sát|muốn chết|không muốn sống|chẳng muốn sống|tự làm hại|làm hại bản thân|kết thúc cuộc đời|kết liễu|rạch tay|nhảy lầu|biến mất mãi mãi)/i;
+  var daDongYGuiNguyCo = false;
+  var datLaiNguyCoThu = theoDoiNguyCo(oNoiDung, 'thu', $('nhac-ho-tro'));
 
   oNoiDung.addEventListener('input', function () {
     $('dem-ky-tu').textContent = oNoiDung.value.length + ' / 5000';
-    $('nhac-ho-tro').hidden = !TU_KHOA_NGUY_CO.test(oNoiDung.value);
     if (oNoiDung.value.trim()) xoaLoi(oNoiDung, 'loi-noi-dung');
   });
   form.addEventListener('change', function (e) {
@@ -980,11 +2160,17 @@ dialog[open]{animation:hien .25s ease-out}
     return { hanhDong: 'gui', noiDung: noiDung, chuDe: chuDe, mongMuon: mongMuon, muonPhanHoi: muonPhanHoi, email: email, ma: ma, web: $('web').value };
   }
 
-  function hienThanhCong(ma, xemTruoc) {
-    $('ma-da-gui').value = ma;
-    $('tb-sao-chep').textContent = '';
-    $('nhan-xem-truoc-tc').hidden = !xemTruoc;
-    moHop('hop-thanh-cong');
+  function lamMoiForm() {
+    form.reset();
+    $('dem-ky-tu').textContent = '0 / 5000';
+    $('truong-email').hidden = true;
+    daDongYGuiNguyCo = false;
+    datLaiNguyCoThu();
+  }
+  function guiXong(ma, xemTruoc, trongHop) {
+    dangHoatCanh = true;
+    dongHop($('hop-gui-thu'));
+    hoatCanhCatThu().then(function () { hienThanhCong(ma, xemTruoc, trongHop); });
   }
 
   form.addEventListener('submit', function (e) {
@@ -992,29 +2178,31 @@ dialog[open]{animation:hien .25s ease-out}
     $('loi-chung').textContent = '';
     var duLieu = kiemTraForm();
     if (!duLieu) return;
+    var nc = timNguyCo(duLieu.noiDung);
+    if (nc && !daDongYGuiNguyCo) { moNguyCo('thu-gui', nc, oNoiDung); return; }
 
     if (XEM_THU) {
       thongBao('Thư chưa được gửi đi',
         'Hòm thư đang ở chế độ xem thử vì chưa được kết nối với máy chủ. Nội dung bạn viết vẫn còn nguyên trong biểu mẫu. Nhóm quản lý cần kết nối Google Apps Script để thư được gửi thật.',
-        [{ chu: 'Quay lại biểu mẫu', lam: function () { moHop('hop-gui-thu'); } },
-         { chu: 'Xem trước màn hình gửi thành công', chinh: true, lam: function () { hienThanhCong(duLieu.ma, true); } }]);
+        [{ chu: 'Quay lại biểu mẫu' },
+         { chu: 'Xem trước màn hình gửi thành công', chinh: true, lam: function () { guiXong(duLieu.ma, true, false); } }]);
       return;
     }
+    if (phien) duLieu.token = phien.token;
 
     var nut = $('nut-gui-thu');
-    nut.disabled = true; nut.textContent = 'Đang gửi thư…';
+    nut.disabled = true; nut.textContent = 'Đang cất thư…';
     goiMayChu(duLieu).then(function (kq) {
       if (kq && kq.ok) {
-        form.reset();
-        $('dem-ky-tu').textContent = '0 / 5000';
-        $('truong-email').hidden = true;
-        $('nhac-ho-tro').hidden = true;
-        hienThanhCong(duLieu.ma, false);
+        lamMoiForm();
+        guiXong(duLieu.ma, false, !!kq.daCatVaoHop);
+        if (phien) taiHopThu().catch(boQua);
         return;
       }
       var loi = kq && kq.loi;
       if (loi === 'ma_trung') { datLoi(oMa, 'loi-ma', 'Mã này đã có người dùng. Hãy đặt một mã khác nhé.'); oMa.focus(); }
       else if (loi === 'ma_khong_hop_le') { datLoi(oMa, 'loi-ma', 'Mã chưa hợp lệ. Hãy kiểm tra lại theo hướng dẫn bên trên.'); oMa.focus(); }
+      else if (loi === 'phien') { datPhien(null); $('loi-chung').textContent = 'Phiên đăng nhập đã hết hạn nên thư chưa gửi. Nội dung vẫn còn nguyên: bấm Gửi thư lần nữa để gửi ẩn danh, hoặc đăng nhập lại.'; }
       else if (loi === 'qua_tai') { $('loi-chung').textContent = 'Khu vườn đang nhận nhiều thư cùng lúc. Bạn đợi một phút rồi bấm Gửi thư lại nhé. Nội dung vẫn còn nguyên.'; }
       else { $('loi-chung').textContent = 'Thư chưa gửi được do dữ liệu chưa hợp lệ. Bạn kiểm tra lại các mục rồi thử lại nhé.'; }
     }).catch(function () {
@@ -1024,34 +2212,118 @@ dialog[open]{animation:hien .25s ease-out}
     });
   });
 
-  /* ---------- Sao chép mã ---------- */
-  $('nut-sao-chep').addEventListener('click', function () {
-    var o = $('ma-da-gui'), tb = $('tb-sao-chep');
-    function chonThuCong() { o.focus(); o.select(); tb.textContent = 'Mã đã được bôi đen. Nhấn Ctrl+C (hoặc giữ và chọn Sao chép trên điện thoại) để lưu lại.'; }
+  /* ---------- Gửi thành công: lưu mã, hỏi lại hai lần ---------- */
+  var maVuaGui = '', daXacNhanMa = true, buocLuu = 1;
+  function saoChep(chu, oChon, tb) {
+    function chonThuCong() { if (oChon) { oChon.focus(); if (oChon.select) oChon.select(); } tb.textContent = 'Mã đã được bôi đen. Nhấn Ctrl+C (hoặc giữ và chọn Sao chép trên điện thoại) để lưu lại.'; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(o.value).then(function () { tb.textContent = 'Đã sao chép mã. Hãy dán vào một nơi an toàn nhé.'; }, chonThuCong);
+      navigator.clipboard.writeText(chu).then(function () { tb.textContent = 'Đã sao chép. Hãy dán vào một nơi an toàn nhé.'; }, chonThuCong);
     } else chonThuCong();
+  }
+  function taiTep(ten, noiDung) {
+    var url = URL.createObjectURL(new Blob(['﻿' + noiDung], { type: 'text/plain;charset=utf-8' }));
+    var a = document.createElement('a');
+    a.href = url; a.download = ten;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+  }
+  function hienThanhCong(ma, xemTruoc, trongHop) {
+    maVuaGui = ma;
+    daXacNhanMa = false;
+    $('ma-da-gui').value = ma;
+    $('tb-sao-chep').textContent = '';
+    $('nhan-xem-truoc-tc').hidden = !xemTruoc;
+    var th = $('tc-trong-hop');
+    th.hidden = !(trongHop && phien);
+    if (trongHop && phien) th.textContent = 'Lá thư cũng đã được cất vào hòm thư của @' + phien.ten + '. Bấm Lấy thư để đọc lại bất cứ lúc nào.';
+    moHop('hop-thanh-cong');
+  }
+  $('nut-sao-chep').addEventListener('click', function () { saoChep($('ma-da-gui').value, $('ma-da-gui'), $('tb-sao-chep')); });
+  $('nut-tai-ma').addEventListener('click', function () {
+    var d = new Date();
+    taiTep('ma-thu-mindnest.txt', 'MindNest – Khu vườn tâm sự\r\n\r\nMã thư của bạn: ' + maVuaGui +
+      '\r\nNgày gửi: ' + d.toLocaleDateString('vi-VN') +
+      '\r\n\r\nNhập mã này ở mục "Tra cứu thư" để đọc lời hồi đáp.\r\nHãy giữ kín mã: ai có mã đều đọc được lời hồi đáp.\r\n');
+    $('tb-sao-chep').textContent = 'Đã tải tệp ma-thu-mindnest.txt về máy.';
+  });
+
+  function datBuocLuu(n) {
+    buocLuu = n;
+    $('buoc-luu-1').hidden = n !== 1;
+    $('buoc-luu-2').hidden = n !== 2;
+    $('td-luu-ma').textContent = n === 1 ? 'Bạn đã lưu mã thư chưa?' : 'Chắc chắn chưa nè?';
+    $('nut-chua-luu').textContent = n === 1 ? 'Chưa, để mình lưu' : 'Để mình xem lại mã';
+    $('nut-da-luu').textContent = n === 1 ? 'Mình lưu rồi' : 'Xác nhận';
+    if (n === 2) {
+      var o = $('o-4-ky-tu');
+      o.value = '';
+      xoaLoi(o, 'loi-4-ky-tu');
+      setTimeout(function () { o.focus(); }, 30);
+    }
+  }
+  function batDauXacNhan() { datBuocLuu(1); moHop('hop-luu-ma', true); }
+  function quayLaiLuuMa() {
+    dongHop($('hop-luu-ma'));
+    var o = $('o-ma-da-gui');
+    o.classList.remove('nhac'); void o.offsetWidth; o.classList.add('nhac');
+    $('nut-sao-chep').focus();
+  }
+  $('nut-hoan-tat').addEventListener('click', batDauXacNhan);
+  $('nut-dong-tc').addEventListener('click', batDauXacNhan);
+  $('hop-thanh-cong').addEventListener('cancel', function (e) { e.preventDefault(); batDauXacNhan(); });
+  $('hop-thanh-cong').addEventListener('close', function () {
+    // Trình duyệt có thể buộc đóng khi bấm Esc nhiều lần: mở lại để chắc người dùng đã lưu mã
+    if (!daXacNhanMa) setTimeout(function () { moHop('hop-thanh-cong'); batDauXacNhan(); }, 0);
+  });
+  $('nut-chua-luu').addEventListener('click', quayLaiLuuMa);
+  $('hop-luu-ma').addEventListener('cancel', function (e) { e.preventDefault(); quayLaiLuuMa(); });
+  $('form-luu-ma').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (buocLuu === 1) { datBuocLuu(2); return; }
+    var o = $('o-4-ky-tu');
+    if (chuanHoaMa(o.value) !== maVuaGui.slice(-4)) {
+      datLoi(o, 'loi-4-ky-tu', 'Chưa khớp với mã thư. Bạn bấm "Để mình xem lại mã" để kiểm tra nhé.');
+      o.select();
+      return;
+    }
+    daXacNhanMa = true;
+    dongHop($('hop-luu-ma'));
+    dongHop($('hop-thanh-cong'));
+    toast('Tuyệt! Mã thư đã được cất an toàn.');
   });
 
   /* ---------- Tra cứu thư ---------- */
   var formTraCuu = $('form-tra-cuu'), oTraCuu = $('ma-tra-cuu'), ketQua = $('ket-qua');
-  function hienKetQua(loai, chu, coThuLai) {
+  function hienKetQua(loai, chu, coThuLai, phanThem) {
     ketQua.className = 'ket-qua ' + loai;
     ketQua.innerHTML = '';
-    var p = document.createElement('p'); p.textContent = chu; ketQua.appendChild(p);
+    ketQua.appendChild(taoPhanTu('p', null, chu));
+    if (phanThem) ketQua.appendChild(phanThem);
     if (coThuLai) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.className = 'nut nut-phu'; b.textContent = 'Thử lại';
-      b.addEventListener('click', function () { ketQua.className = ''; ketQua.innerHTML = ''; oTraCuu.focus(); oTraCuu.select(); });
-      ketQua.appendChild(b);
+      ketQua.appendChild(taoNut('Thử lại', 'nut nut-phu', function () { ketQua.className = ''; ketQua.innerHTML = ''; oTraCuu.focus(); oTraCuu.select(); }));
     }
   }
-  function hienHoiDap(noiDung, ngay, xemTruoc) {
-    $('noi-dung-hoi-dap').textContent = noiDung;
+  function hienHoiDap(noiDung, ngay, xemTruoc, podcast, baiHat, phanThem) {
+    $('noi-dung-hoi-dap').textContent = noiDung || 'Khu vườn gửi bạn một chút âm thanh thay cho lời nhắn.';
+    var dk = $('dinh-kem-hoi-dap');
+    dk.innerHTML = '';
+    themDinhKem(dk, podcast, baiHat);
+    var c = $('cat-hoi-dap');
+    c.innerHTML = '';
+    if (phanThem) c.appendChild(phanThem);
     $('ngay-hoi-dap').textContent = ngay ? 'Hồi đáp ngày ' + ngay : '';
     $('nhan-xem-truoc-hd').hidden = !xemTruoc;
     ketQua.className = ''; ketQua.innerHTML = '';
     moHop('hop-hoi-dap');
+  }
+  function nutCatThu(ma) {
+    var b = taoNut('Cất thư này vào hòm thư của bạn', 'nut nut-phu', function () {
+      b.disabled = true; b.textContent = 'Đang cất…';
+      catBangMa(ma).then(function () { b.textContent = 'Đã cất vào hòm thư'; }, function () {
+        b.disabled = false; b.textContent = 'Cất thư này vào hòm thư của bạn';
+      });
+    });
+    return b;
   }
   var KHONG_THAY = 'Chúng mình chưa tìm thấy lá thư này. Bạn hãy kiểm tra lại mã và thử thêm một lần nữa nhé!';
   var DANG_CHO = 'Lá thư của bạn đã được ghi nhận và hiện vẫn đang chờ phản hồi. Cảm ơn bạn đã kiên nhẫn chờ đợi nhé!';
@@ -1073,14 +2345,17 @@ dialog[open]{animation:hien .25s ease-out}
     var nut = $('nut-tra-cuu');
     nut.disabled = true; nut.textContent = 'Đang tìm thư…';
     ketQua.className = ''; ketQua.innerHTML = '';
-    goiMayChu({ hanhDong: 'tracuu', ma: ma }).then(function (kq) {
+    var duLieu = { hanhDong: 'tracuu', ma: ma };
+    if (phien) duLieu.token = phien.token;
+    goiMayChu(duLieu).then(function (kq) {
       if (!kq || !kq.ok) {
         hienKetQua('loi', kq && kq.loi === 'qua_tai' ? 'Khu vườn đang có nhiều lượt tra cứu cùng lúc. Bạn đợi một phút rồi thử lại nhé.' : 'Khu vườn chưa tra cứu được lúc này. Bạn thử lại sau ít phút nhé.', true);
         return;
       }
-      if (kq.trangThai === 'da_phan_hoi') hienHoiDap(kq.phanHoi, kq.ngay, false);
-      else if (kq.trangThai === 'dang_cho') hienKetQua('cho', DANG_CHO, false);
-      else if (kq.trangThai === 'khong_can_phan_hoi') hienKetQua('cho', 'Lá thư của bạn đã được ghi nhận. Bạn đã chọn không cần hồi đáp, và khu vườn nhỏ trân trọng những điều bạn đã chia sẻ.', false);
+      var them = kq.coTheCat && phien ? nutCatThu(ma) : null;
+      if (kq.trangThai === 'da_phan_hoi') hienHoiDap(kq.phanHoi, kq.ngay, false, kq.podcast, kq.baiHat, them);
+      else if (kq.trangThai === 'dang_cho') hienKetQua('cho', DANG_CHO, false, them);
+      else if (kq.trangThai === 'khong_can_phan_hoi') hienKetQua('cho', 'Lá thư của bạn đã được ghi nhận. Bạn đã chọn không cần hồi đáp, và khu vườn nhỏ trân trọng những điều bạn đã chia sẻ.', false, them);
       else hienKetQua('khong-thay', KHONG_THAY, true);
     }).catch(function () {
       hienKetQua('loi', 'Chưa kết nối được với khu vườn. Bạn kiểm tra mạng rồi thử lại nhé.', true);
@@ -1090,10 +2365,10 @@ dialog[open]{animation:hien .25s ease-out}
   });
 
   /* ---------- Biệt danh ---------- */
-  var KHOA_BD = 'mindnest-biet-danh', bietDanh = '', sauKhiLuuBd = null;
-  try { bietDanh = localStorage.getItem(KHOA_BD) || ''; } catch (e) { bietDanh = ''; }
+  var KHOA_BD = 'mindnest-biet-danh', bietDanhKhach = docTam(KHOA_BD) || '', sauKhiLuuBd = null;
   var MAU_BIET_DANH;
   try { MAU_BIET_DANH = new RegExp('^[\\p{L}\\p{N} ]+$', 'u'); } catch (e) { MAU_BIET_DANH = /^[^<>{}\[\]\\\/@#$%^&*=+|~`"]+$/; }
+  function chuanHoaBietDanh(s) { return String(s || '').trim().replace(/\s+/g, ' '); }
   function kiemTraBietDanh(s) {
     if (s.length < 2) return 'Biệt danh cần ít nhất 2 ký tự.';
     if (s.length > 24) return 'Biệt danh tối đa 24 ký tự.';
@@ -1101,49 +2376,296 @@ dialog[open]{animation:hien .25s ease-out}
     if (/\d{6,}/.test(s)) return 'Biệt danh có dãy số dài, trông giống mã số sinh viên. Hãy chọn tên khác để giữ ẩn danh.';
     return '';
   }
-  function hienBietDanh() {
-    $('chu-biet-danh').textContent = bietDanh || 'Tạo biệt danh';
-    $('nut-biet-danh').setAttribute('aria-label', bietDanh ? 'Biệt danh của bạn: ' + bietDanh + '. Bấm để đổi' : 'Tạo biệt danh');
-    $('ky-ten-ghim').textContent = bietDanh;
-    $('nut-xoa-biet-danh').hidden = !bietDanh;
+  var TEN_A = ['Mầm Xanh', 'Cún Con', 'Mèo Mướp', 'Gấu Trúc', 'Cá Vàng', 'Thỏ Bông', 'Chim Sẻ', 'Ốc Sên', 'Cánh Cụt',
+    'Khủng Long', 'Bánh Bao', 'Trà Sữa', 'Bánh Flan', 'Xoài Non', 'Bé Nấm', 'Hạt Đậu', 'Đám Mây', 'Ngôi Sao', 'Sứa Hồng',
+    'Kẹo Dẻo', 'Bánh Mì', 'Dưa Hấu', 'Rùa Con', 'Xương Rồng', 'Mochi', 'Bông Gòn', 'Cà Phê Muối', 'Bồ Công Anh', 'Lá Non',
+    'Gà Bông', 'Vịt Vàng', 'Sóc Nâu', 'Cáo Nhỏ', 'Cà Rốt', 'Hoa Sứ', 'Cỏ May', 'Giọt Sương', 'Nắng Sớm', 'Chồi Biếc', 'Bé Ong'];
+  var TEN_B = ['Chill Phết', 'Mê Ngủ', 'Chạy Deadline', 'Năm Nhất', 'Ca Tối', 'Thư Viện', 'Hay Cười', 'Lạc Quan', 'Thích Mưa',
+    'Ghiền Trà Sữa', 'Không Drama', 'Ôn Thi', 'Thức Khuya', 'Hướng Nội', 'Mùa Thi', 'Biết Bay', 'Hay Quên', 'Ghế Đá',
+    'Săn Sale', 'Cầu Qua Môn', 'Tự Tin', 'Nhỏ Xíu', 'Tích Cực', 'Bình Tĩnh', 'Cơ Sở B', 'Chăm Chỉ', 'Ăn Hàng', 'Thích Ôm',
+    'Vibe Xịn', 'Có Gu', 'Đáng Yêu', 'Mạnh Mẽ', 'Lười Nhẹ', 'Siêu Cấp', 'Giảng Đường', 'Căn Tin', 'Đi Học Sớm', 'Healing'];
+  var TEN_RIENG = ['Deadline Là Bạn', 'Ngủ Đủ Tám Tiếng', 'Trà Đá Vỉa Hè', 'Một Chiếc Lá Chill', 'Sinh Viên Tích Cực',
+    'Điểm A Đang Tới', 'Healing Mỗi Ngày', 'Ổn Áp Lắm Nha', 'Cục Bông Biết Đi', 'Chiếc Lá Ôn Thi', 'Mèo Ơi Qua Môn',
+    'Người Yêu Thư Viện', 'Hôm Nay Ổn Hơn', 'Tâm Hồn Đậu Hũ', 'Hạt Mưa Lạc Quan', 'Bông Hoa Không Drama'];
+  function goiYBietDanh(n) {
+    var ds = [], lanThu = 0;
+    while (ds.length < n && lanThu++ < 200) {
+      var ten = ngauNhien(4) === 0 ? TEN_RIENG[ngauNhien(TEN_RIENG.length)] : TEN_A[ngauNhien(TEN_A.length)] + ' ' + TEN_B[ngauNhien(TEN_B.length)];
+      if (ten.length <= 24 && ds.indexOf(ten) < 0) ds.push(ten);
+    }
+    return ds;
   }
+  function veChip(idKhung, o, idLoi) {
+    var k = $(idKhung);
+    k.innerHTML = '';
+    goiYBietDanh(6).forEach(function (ten) {
+      k.appendChild(taoNut(ten, 'chip', function () { o.value = ten; xoaLoi(o, idLoi); o.focus(); }));
+    });
+    k.appendChild(taoNut('Đổi gợi ý khác', 'chip', function () { veChip(idKhung, o, idLoi); }));
+  }
+
   function moBietDanh(gioiThieu, tiepTheo) {
     sauKhiLuuBd = tiepTheo || null;
     $('gioi-thieu-biet-danh').textContent = gioiThieu || 'Biệt danh là tên bạn ký dưới những lời nhắn trên Bảng ghim. Không cần tên thật, chỉ cần một cái tên bạn thấy dễ thương.';
-    $('biet-danh').value = bietDanh;
+    $('luu-y-biet-danh').textContent = phien
+      ? 'Biệt danh được lưu cùng tài khoản @' + phien.ten + ', dùng được trên mọi thiết bị.'
+      : 'Biệt danh chỉ được lưu trong trình duyệt này. Đổi máy hoặc xóa dữ liệu trình duyệt thì bạn tạo lại là được. Muốn giữ biệt danh ở mọi nơi, hãy tạo tài khoản.';
+    $('biet-danh').value = layBietDanh();
     xoaLoi($('biet-danh'), 'loi-biet-danh');
+    veChip('chip-biet-danh', $('biet-danh'), 'loi-biet-danh');
+    capNhatGiaoDienTk();
     moHop('hop-biet-danh');
     $('biet-danh').focus();
   }
-  $('nut-biet-danh').addEventListener('click', function () {
-    menu.classList.remove('mo'); nutMenu.setAttribute('aria-expanded', 'false');
-    moBietDanh();
-  });
-  var TEN_A = ['Mầm Xanh', 'Lá Non', 'Hoa Cúc Nhỏ', 'Cỏ May', 'Giọt Sương', 'Nắng Sớm', 'Hạt Mầm', 'Cây Bàng', 'Hoa Sứ', 'Mây Lành', 'Chồi Biếc', 'Bồ Công Anh'];
-  var TEN_B = ['Thư Viện', 'Cơ Sở B', 'Cơ Sở A', 'Cơ Sở N', 'Ca Tối', 'Năm Nhất', 'Mùa Thi', 'Ghế Đá', 'Căn Tin', 'Giảng Đường'];
+  $('nut-goi-y-bd').textContent = 'Ngẫu nhiên';
   $('nut-goi-y-bd').addEventListener('click', function () {
-    var s = new Uint32Array(2); window.crypto.getRandomValues(s);
-    $('biet-danh').value = TEN_A[s[0] % TEN_A.length] + ' ' + TEN_B[s[1] % TEN_B.length];
+    $('biet-danh').value = goiYBietDanh(1)[0];
     xoaLoi($('biet-danh'), 'loi-biet-danh');
+    veChip('chip-biet-danh', $('biet-danh'), 'loi-biet-danh');
   });
   $('form-biet-danh').addEventListener('submit', function (e) {
     e.preventDefault();
-    var o = $('biet-danh'), v = o.value.trim().replace(/\s+/g, ' '), loi = kiemTraBietDanh(v);
+    var o = $('biet-danh'), v = chuanHoaBietDanh(o.value), loi = kiemTraBietDanh(v);
     if (loi) { datLoi(o, 'loi-biet-danh', loi); o.focus(); return; }
-    bietDanh = v;
-    try { localStorage.setItem(KHOA_BD, v); } catch (err) { /* trình duyệt chặn lưu: vẫn dùng trong phiên này */ }
-    hienBietDanh();
-    dongHop($('hop-biet-danh'));
-    var tiep = sauKhiLuuBd; sauKhiLuuBd = null;
-    if (tiep) tiep();
+    function xong() {
+      capNhatGiaoDienTk();
+      capNhatThongBao();
+      dongHop($('hop-biet-danh'));
+      var tiep = sauKhiLuuBd; sauKhiLuuBd = null;
+      if (tiep) tiep();
+    }
+    if (!phien) {
+      bietDanhKhach = v;
+      luuTam(KHOA_BD, v);
+      xong();
+      return;
+    }
+    var nut = $('form-biet-danh').querySelector('button[type=submit]');
+    nut.disabled = true;
+    goiMayChu({ hanhDong: 'doibietdanh', token: phien.token, bietDanh: v }).then(function (kq) {
+      if (kq && kq.ok) {
+        phien.bietDanh = v;
+        luuTam(KHOA_PHIEN, JSON.stringify(phien));
+        toast('Biệt danh mới: ' + v);
+        xong();
+        return;
+      }
+      if (kq && kq.loi === 'phien') { hetPhien(); return; }
+      datLoi(o, 'loi-biet-danh', kq && kq.loi === 'biet_danh' ? 'Biệt danh chưa hợp lệ, bạn chọn tên khác nhé.' : 'Chưa lưu được biệt danh, bạn thử lại nhé.');
+    }).catch(function () {
+      datLoi(o, 'loi-biet-danh', 'Chưa kết nối được với khu vườn. Bạn thử lại nhé.');
+    }).finally(function () { nut.disabled = false; });
   });
   $('nut-xoa-biet-danh').addEventListener('click', function () {
-    bietDanh = '';
-    try { localStorage.removeItem(KHOA_BD); } catch (err) { }
-    hienBietDanh();
+    bietDanhKhach = '';
+    luuTam(KHOA_BD, null);
+    capNhatGiaoDienTk();
     dongHop($('hop-biet-danh'));
   });
-  hienBietDanh();
+
+  /* ---------- Đăng nhập, tạo tài khoản, khôi phục ---------- */
+  var sauDangNhap = null;
+  function chuanHoaTen(s) { return String(s || '').trim().toLowerCase(); }
+  function kiemTraTen(t) {
+    if (!t) return 'Bạn chưa nhập tên đăng nhập.';
+    if (t.length < 3 || t.length > 24) return 'Tên đăng nhập cần dài 3 đến 24 ký tự.';
+    if (!/^[a-z]/.test(t)) return 'Tên đăng nhập cần bắt đầu bằng một chữ cái không dấu.';
+    if (!/^[a-z][a-z0-9_.]+$/.test(t)) return 'Chỉ dùng chữ thường không dấu, chữ số, dấu chấm hoặc gạch dưới.';
+    if (/\d{6,}/.test(t)) return 'Tên có dãy số dài, trông giống mã số sinh viên. Hãy chọn tên khác để giữ ẩn danh.';
+    if (t === 'true' || t === 'false') return 'Tên này không dùng được, bạn chọn tên khác nhé.';
+    return '';
+  }
+  var LOI_TK = {
+    sai_thong_tin: 'Tên đăng nhập hoặc mật khẩu chưa đúng.',
+    tam_khoa: 'Bạn nhập sai nhiều lần quá. Hãy nghỉ 15 phút rồi thử lại nhé.',
+    qua_tai: 'Khu vườn đang đón nhiều bạn cùng lúc. Bạn đợi một phút rồi thử lại nhé.',
+    mat_khau: 'Mật khẩu cần ít nhất 8 ký tự và khác tên đăng nhập.'
+  };
+  function loiTk(kq) { return LOI_TK[kq && kq.loi] || 'Chưa thực hiện được, bạn thử lại sau ít phút nhé.'; }
+  var LOI_MANG = 'Chưa kết nối được với khu vườn. Bạn kiểm tra mạng rồi thử lại nhé.';
+
+  function chonTab(t) {
+    ['dang-nhap', 'dang-ky', 'khoi-phuc'].forEach(function (x) { $('form-' + x).hidden = x !== t; });
+    $('tab-dn').hidden = t === 'khoi-phuc';
+    $('tab-dang-nhap').setAttribute('aria-selected', t === 'dang-nhap' ? 'true' : 'false');
+    $('tab-dang-ky').setAttribute('aria-selected', t === 'dang-ky' ? 'true' : 'false');
+    $('td-dang-nhap').textContent = t === 'dang-ky' ? 'Tạo một góc vườn cho riêng bạn' : (t === 'khoi-phuc' ? 'Đặt lại mật khẩu' : 'Vào khu vườn của bạn');
+    if (t === 'dang-ky' && !$('dk-bd').value) veChip('chip-dk', $('dk-bd'), 'loi-dk-bd');
+    ['loi-dn', 'loi-dk', 'loi-kp'].forEach(function (id) { $(id).textContent = ''; });
+    var dau = { 'dang-nhap': 'dn-ten', 'dang-ky': 'dk-ten', 'khoi-phuc': 'kp-ten' }[t];
+    setTimeout(function () { $(dau).focus(); }, 30);
+  }
+  function moDangNhap(gioiThieu, tiepTheo, cheDo) {
+    if (XEM_THU) { thongBao('Chưa kết nối máy chủ', 'Tài khoản chỉ dùng được khi hòm thư đã được kết nối với Google Apps Script.'); return; }
+    dongMenu(); dongBang();
+    sauDangNhap = tiepTheo || null;
+    var gt = $('gioi-thieu-dn');
+    gt.textContent = gioiThieu || '';
+    gt.hidden = !gioiThieu;
+    moHop('hop-dang-nhap');
+    chonTab(cheDo || 'dang-nhap');
+  }
+  $('tab-dang-nhap').addEventListener('click', function () { chonTab('dang-nhap'); });
+  $('tab-dang-ky').addEventListener('click', function () { chonTab('dang-ky'); });
+  $('nut-quen-mk').addEventListener('click', function () { $('kp-ten').value = $('dn-ten').value; chonTab('khoi-phuc'); });
+  $('nut-ve-dn').addEventListener('click', function () { chonTab('dang-nhap'); });
+  $('tab-dn').addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      var dk = $('tab-dang-nhap').getAttribute('aria-selected') === 'true';
+      chonTab(dk ? 'dang-ky' : 'dang-nhap');
+      $(dk ? 'tab-dang-ky' : 'tab-dang-nhap').focus();
+    }
+  });
+
+  function vaoVuon(kq, loiChao) {
+    datPhien({ token: kq.token, ten: kq.taiKhoan.ten, bietDanh: kq.taiKhoan.bietDanh });
+    taiHopThu().catch(boQua);
+    toast(loiChao);
+    var tiep = sauDangNhap; sauDangNhap = null;
+    if (tiep) tiep();
+  }
+
+  $('form-dang-nhap').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var oTen = $('dn-ten'), oMk = $('dn-mk'), ten = chuanHoaTen(oTen.value), mk = oMk.value;
+    $('loi-dn').textContent = '';
+    xoaLoi(oTen, 'loi-dn-ten'); xoaLoi(oMk, 'loi-dn-mk');
+    if (!ten) { datLoi(oTen, 'loi-dn-ten', 'Bạn chưa nhập tên đăng nhập.'); oTen.focus(); return; }
+    if (!mk) { datLoi(oMk, 'loi-dn-mk', 'Bạn chưa nhập mật khẩu.'); oMk.focus(); return; }
+    var nut = $('nut-dn');
+    nut.disabled = true; nut.textContent = 'Đang mở cổng vườn…';
+    goiMayChu({ hanhDong: 'dangnhap', tenDangNhap: ten, matKhau: mk }).then(function (kq) {
+      if (kq && kq.ok) {
+        oMk.value = '';
+        dongHop($('hop-dang-nhap'));
+        vaoVuon(kq, 'Chào mừng ' + kq.taiKhoan.bietDanh + ' quay lại khu vườn!');
+        return;
+      }
+      $('loi-dn').textContent = loiTk(kq);
+      oMk.select();
+    }).catch(function () { $('loi-dn').textContent = LOI_MANG; })
+      .finally(function () { nut.disabled = false; nut.textContent = 'Đăng nhập'; });
+  });
+
+  $('form-dang-ky').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var oTen = $('dk-ten'), oBd = $('dk-bd'), oMk = $('dk-mk'), oMk2 = $('dk-mk2');
+    var ten = chuanHoaTen(oTen.value), bd = chuanHoaBietDanh(oBd.value), mk = oMk.value;
+    oTen.value = ten;
+    $('loi-dk').textContent = '';
+    var dauTien = null;
+    function kiem(o, idLoi, loi) { if (loi) { datLoi(o, idLoi, loi); if (!dauTien) dauTien = o; } else xoaLoi(o, idLoi); }
+    kiem(oTen, 'loi-dk-ten', kiemTraTen(ten));
+    kiem(oBd, 'loi-dk-bd', bd ? kiemTraBietDanh(bd) : 'Hãy chọn một biệt danh, hoặc bấm một gợi ý bên dưới.');
+    kiem(oMk, 'loi-dk-mk', mk.length < 8 ? 'Mật khẩu cần ít nhất 8 ký tự.' : (mk.toLowerCase() === ten ? 'Mật khẩu không được giống tên đăng nhập.' : ''));
+    kiem(oMk2, 'loi-dk-mk2', oMk2.value !== mk ? 'Hai lần nhập mật khẩu chưa khớp.' : '');
+    if (dauTien) { dauTien.focus(); return; }
+    if (!$('dk-dong-y').checked) { $('loi-dk').textContent = 'Bạn đánh dấu ô xác nhận bên trên giúp khu vườn nhé.'; $('dk-dong-y').focus(); return; }
+
+    var nut = $('nut-dk');
+    nut.disabled = true; nut.textContent = 'Đang gieo hạt…';
+    goiMayChu({ hanhDong: 'dangky', tenDangNhap: ten, matKhau: mk, bietDanh: bd }).then(function (kq) {
+      if (kq && kq.ok) {
+        oMk.value = ''; oMk2.value = ''; $('dk-dong-y').checked = false;
+        moMaKhoiPhuc(kq, 'Chào mừng ' + bd + ' đến với khu vườn!');
+        return;
+      }
+      var loi = kq && kq.loi;
+      if (loi === 'ten_trung') { datLoi(oTen, 'loi-dk-ten', 'Tên này đã có người dùng. Thử thêm vài chữ cái hoặc chữ số nhé.'); oTen.focus(); }
+      else if (loi === 'ten') { datLoi(oTen, 'loi-dk-ten', 'Tên đăng nhập chưa hợp lệ.'); oTen.focus(); }
+      else if (loi === 'biet_danh') { datLoi(oBd, 'loi-dk-bd', 'Biệt danh chưa hợp lệ.'); oBd.focus(); }
+      else $('loi-dk').textContent = loiTk(kq);
+    }).catch(function () { $('loi-dk').textContent = LOI_MANG; })
+      .finally(function () { nut.disabled = false; nut.textContent = 'Tạo tài khoản'; });
+  });
+
+  $('form-khoi-phuc').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ten = chuanHoaTen($('kp-ten').value), ma = $('kp-ma').value.trim(), mk = $('kp-mk').value;
+    $('loi-kp').textContent = '';
+    if (!ten || !ma) { $('loi-kp').textContent = 'Bạn điền đủ tên đăng nhập và mã khôi phục nhé.'; return; }
+    if (mk.length < 8) { $('loi-kp').textContent = 'Mật khẩu mới cần ít nhất 8 ký tự.'; $('kp-mk').focus(); return; }
+    var nut = $('nut-kp');
+    nut.disabled = true;
+    goiMayChu({ hanhDong: 'khoiphuc', tenDangNhap: ten, maKhoiPhuc: ma, matKhauMoi: mk }).then(function (kq) {
+      if (kq && kq.ok) {
+        $('kp-ma').value = ''; $('kp-mk').value = '';
+        moMaKhoiPhuc(kq, 'Đã đặt mật khẩu mới. Chào mừng bạn quay lại!', true);
+        return;
+      }
+      $('loi-kp').textContent = kq && kq.loi === 'sai_thong_tin' ? 'Tên đăng nhập hoặc mã khôi phục chưa đúng.' : loiTk(kq);
+    }).catch(function () { $('loi-kp').textContent = LOI_MANG; })
+      .finally(function () { nut.disabled = false; });
+  });
+
+  var kqChoVaoVuon = null, loiChaoCho = '';
+  function moMaKhoiPhuc(kq, loiChao, laMaMoi) {
+    kqChoVaoVuon = kq; loiChaoCho = loiChao;
+    $('td-ma-khoi-phuc').textContent = laMaMoi ? 'Đây là mã khôi phục mới của bạn' : 'Cất kỹ mã khôi phục này nhé';
+    $('chu-ma-khoi-phuc').textContent = kq.maKhoiPhuc;
+    $('tb-kp').textContent = laMaMoi ? 'Mã khôi phục cũ đã hết hiệu lực.' : '';
+    $('da-luu-kp').checked = false;
+    $('nut-xong-kp').disabled = true;
+    moHop('hop-ma-khoi-phuc');
+  }
+  $('da-luu-kp').addEventListener('change', function () { $('nut-xong-kp').disabled = !this.checked; });
+  function xongMaKhoiPhuc() {
+    dongHop($('hop-ma-khoi-phuc'));
+    if (!kqChoVaoVuon) return;
+    var kq = kqChoVaoVuon; kqChoVaoVuon = null;
+    vaoVuon(kq, loiChaoCho);
+  }
+  $('hop-ma-khoi-phuc').addEventListener('cancel', function (e) { e.preventDefault(); if ($('da-luu-kp').checked) xongMaKhoiPhuc(); });
+  $('hop-ma-khoi-phuc').addEventListener('close', function () { if (kqChoVaoVuon) xongMaKhoiPhuc(); });
+  $('nut-xong-kp').addEventListener('click', xongMaKhoiPhuc);
+  $('nut-chep-kp').addEventListener('click', function () { saoChep($('chu-ma-khoi-phuc').textContent, null, $('tb-kp')); });
+  $('nut-tai-kp').addEventListener('click', function () {
+    var ten = kqChoVaoVuon ? kqChoVaoVuon.taiKhoan.ten : (phien ? phien.ten : '');
+    taiTep('ma-khoi-phuc-mindnest.txt', 'MindNest – Khu vườn tâm sự\r\n\r\nTên đăng nhập: ' + ten +
+      '\r\nMã khôi phục: ' + $('chu-ma-khoi-phuc').textContent +
+      '\r\n\r\nDùng mã này ở mục "Quên mật khẩu?" để đặt mật khẩu mới.\r\nGiữ kín mã này, ai có mã đều đặt lại được mật khẩu của bạn.\r\n');
+    $('tb-kp').textContent = 'Đã tải tệp ma-khoi-phuc-mindnest.txt về máy.';
+  });
+
+  /* ---------- Tài khoản ---------- */
+  function moTaiKhoan() {
+    veAnhDaiDien($('anh-tk-lon'), phien.bietDanh);
+    $('tk-biet-danh').textContent = phien.bietDanh;
+    $('tk-ten').textContent = '@' + phien.ten;
+    $('xoa-mk').value = '';
+    $('loi-xoa-tk').textContent = '';
+    moHop('hop-tai-khoan');
+  }
+  $('nut-tai-khoan').addEventListener('click', function () {
+    dongMenu(); dongBang();
+    if (phien) moTaiKhoan(); else moDangNhap();
+  });
+  $('nut-tk-hop-thu').addEventListener('click', function () { dongHop($('hop-tai-khoan')); layThu(); });
+  $('nut-tk-biet-danh').addEventListener('click', function () { moBietDanh('', moTaiKhoan); });
+  $('nut-dang-xuat').addEventListener('click', function () {
+    datPhien(null);
+    dongHop($('hop-tai-khoan'));
+    toast('Bạn đã đăng xuất. Hẹn gặp lại ở khu vườn nhé!');
+  });
+  $('form-xoa-tk').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var mk = $('xoa-mk').value;
+    if (!mk) { $('loi-xoa-tk').textContent = 'Bạn nhập mật khẩu để xác nhận nhé.'; $('xoa-mk').focus(); return; }
+    var nut = $('nut-xoa-tk');
+    nut.disabled = true;
+    goiMayChu({ hanhDong: 'xoataikhoan', token: phien.token, matKhau: mk }).then(function (kq) {
+      if (kq && kq.ok) {
+        luuTam(khoaDaDoc(), null);
+        datPhien(null);
+        dongHop($('hop-tai-khoan'));
+        thongBao('Đã xóa tài khoản', 'Tài khoản của bạn đã được xóa. Cảm ơn bạn đã ghé khu vườn, cửa vườn luôn mở khi bạn muốn quay lại.');
+        return;
+      }
+      if (kq && kq.loi === 'phien') { hetPhien(); return; }
+      $('loi-xoa-tk').textContent = kq && kq.loi === 'sai_thong_tin' ? 'Mật khẩu chưa đúng.' : loiTk(kq);
+    }).catch(function () { $('loi-xoa-tk').textContent = LOI_MANG; })
+      .finally(function () { nut.disabled = false; });
+  });
 
   /* ---------- Bảng ghim ---------- */
   var luoiGhim = $('luoi-ghim');
@@ -1156,23 +2678,19 @@ dialog[open]{animation:hien .25s ease-out}
     { bietDanh: 'Chồi Biếc Giảng Đường', loiNhan: 'Đi chậm cũng được, miễn là đừng bỏ cuộc.' }
   ];
   function taoGiay(g, nhan) {
-    var li = document.createElement('li'); li.className = 'giay-ghim';
-    var p = document.createElement('p'); p.textContent = g.loiNhan; li.appendChild(p);
-    var ky = document.createElement('div'); ky.className = 'ky';
-    var b = document.createElement('b'); b.textContent = g.bietDanh; ky.appendChild(b);
-    var phai = document.createElement('span');
-    if (nhan) { phai.className = 'tag'; phai.textContent = nhan; } else phai.textContent = g.ngay || '';
-    ky.appendChild(phai); li.appendChild(ky);
+    var li = taoPhanTu('li', 'giay-ghim');
+    li.appendChild(taoPhanTu('p', null, g.loiNhan));
+    var ky = taoPhanTu('div', 'ky');
+    ky.appendChild(taoPhanTu('b', null, g.bietDanh));
+    ky.appendChild(nhan ? taoPhanTu('span', 'tag', nhan) : taoPhanTu('span', null, g.ngay || ''));
+    li.appendChild(ky);
     return li;
   }
   function trangThaiBang(chu, nutChu, lam) {
     luoiGhim.innerHTML = '';
-    var li = document.createElement('li'); li.className = 'trang-thai-bang';
-    var p = document.createElement('p'); p.textContent = chu; li.appendChild(p);
-    if (nutChu) {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'nut nut-phu'; b.textContent = nutChu;
-      b.addEventListener('click', lam); li.appendChild(b);
-    }
+    var li = taoPhanTu('li', 'trang-thai-bang');
+    li.appendChild(taoPhanTu('p', null, chu));
+    if (nutChu) li.appendChild(taoNut(nutChu, 'nut nut-phu', lam));
     luoiGhim.appendChild(li);
   }
   function taiBangGhim() {
@@ -1196,22 +2714,23 @@ dialog[open]{animation:hien .25s ease-out}
   }
 
   var oGhim = $('loi-nhan-ghim');
+  var datLaiNguyCoGhim = theoDoiNguyCo(oGhim, 'ghim', $('nhac-ghim'));
   function moGhim() {
     $('nhan-xem-thu-ghim').hidden = !XEM_THU;
     $('loi-chung-ghim').textContent = '';
     xoaLoi(oGhim, 'loi-ghim');
+    capNhatGiaoDienTk();
     moHop('hop-ghim');
     oGhim.focus();
   }
   function batDauGhim() {
-    if (bietDanh) moGhim();
-    else moBietDanh('Trước khi ghim lời nhắn, hãy chọn một biệt danh. Đây là tên sẽ hiện dưới lời nhắn của bạn trên Bảng ghim.', moGhim);
+    if (layBietDanh()) moGhim();
+    else moBietDanh('Trước khi ghim lời nhắn, hãy chọn một biệt danh. Đây là tên sẽ hiện dưới lời nhắn của bạn trên Bảng ghim. Nếu có tài khoản, bạn đăng nhập để dùng biệt danh của tài khoản nhé.', moGhim);
   }
   $('nut-ghim').addEventListener('click', batDauGhim);
   $('nut-doi-bd').addEventListener('click', function () { moBietDanh('', moGhim); });
   oGhim.addEventListener('input', function () {
     $('dem-ghim').textContent = oGhim.value.length + ' / 200';
-    $('nhac-ghim').hidden = !TU_KHOA_NGUY_CO.test(oGhim.value);
     if (oGhim.value.trim().length >= 5) xoaLoi(oGhim, 'loi-ghim');
   });
   $('form-ghim').addEventListener('submit', function (e) {
@@ -1219,11 +2738,18 @@ dialog[open]{animation:hien .25s ease-out}
     $('loi-chung-ghim').textContent = '';
     var v = oGhim.value.trim().replace(/\s+/g, ' ');
     if (v.length < 5) { datLoi(oGhim, 'loi-ghim', 'Lời nhắn cần ít nhất 5 ký tự.'); oGhim.focus(); return; }
-    if (!bietDanh) { moBietDanh('Bạn cần một biệt danh để ký dưới lời nhắn.', moGhim); return; }
+    var nc = timNguyCo(oGhim.value);
+    if (nc) {
+      datLoi(oGhim, 'loi-ghim', 'Hãy sửa lại cụm "' + nc.cum + '" rồi mới ghim được nhé.');
+      moNguyCo('ghim', nc, oGhim);
+      return;
+    }
+    var bd = layBietDanh();
+    if (!bd) { moBietDanh('Bạn cần một biệt danh để ký dưới lời nhắn.', moGhim); return; }
 
     if (XEM_THU) {
       if (luoiGhim.querySelector('.trang-thai-bang')) luoiGhim.innerHTML = '';
-      luoiGhim.insertBefore(taoGiay({ bietDanh: bietDanh, loiNhan: v }, 'Xem trước, chưa gửi'), luoiGhim.firstChild);
+      luoiGhim.insertBefore(taoGiay({ bietDanh: bd, loiNhan: v }, 'Xem trước, chưa gửi'), luoiGhim.firstChild);
       oGhim.value = ''; $('dem-ghim').textContent = '0 / 200';
       dongHop($('hop-ghim'));
       thongBao('Lời nhắn chưa được gửi đi', 'Bảng ghim đang ở chế độ xem thử nên lời nhắn chỉ hiện tạm trên máy bạn để xem trước. Khi nhóm kết nối máy chủ, lời nhắn sẽ được gửi để duyệt.');
@@ -1232,15 +2758,21 @@ dialog[open]{animation:hien .25s ease-out}
 
     var nut = $('nut-gui-ghim');
     nut.disabled = true; nut.textContent = 'Đang ghim…';
-    goiMayChu({ hanhDong: 'ghim', bietDanh: bietDanh, loiNhan: v, web: $('web-ghim').value }).then(function (kq) {
+    var duLieu = { hanhDong: 'ghim', bietDanh: bd, loiNhan: v, web: $('web-ghim').value };
+    if (phien) duLieu.token = phien.token;
+    goiMayChu(duLieu).then(function (kq) {
       if (kq && kq.ok) {
-        oGhim.value = ''; $('dem-ghim').textContent = '0 / 200'; $('nhac-ghim').hidden = true;
+        oGhim.value = ''; $('dem-ghim').textContent = '0 / 200';
+        datLaiNguyCoGhim();
         dongHop($('hop-ghim'));
         thongBao('Lời nhắn đã được gửi!', 'Cảm ơn bạn đã gửi một chút nắng cho khu vườn. Lời nhắn sẽ xuất hiện trên Bảng ghim sau khi nhóm đọc và duyệt.');
+        if (phien) taiHopThu().catch(boQua);
         return;
       }
       var loi = kq && kq.loi;
       if (loi === 'biet_danh') moBietDanh('Biệt danh hiện tại chưa hợp lệ. Hãy chọn một biệt danh khác.', moGhim);
+      else if (loi === 'phien') { datPhien(null); $('loi-chung-ghim').textContent = 'Phiên đăng nhập đã hết hạn. Bạn đăng nhập lại, hoặc chọn biệt danh rồi ghim lại nhé.'; }
+      else if (loi === 'nguy_co') $('loi-chung-ghim').textContent = 'Lời nhắn có từ ngữ cần sửa lại trước khi ghim.';
       else if (loi === 'qua_tai') $('loi-chung-ghim').textContent = 'Khu vườn đang nhận nhiều lời nhắn cùng lúc. Bạn đợi một phút rồi thử lại nhé.';
       else $('loi-chung-ghim').textContent = 'Lời nhắn chưa gửi được. Bạn kiểm tra lại rồi thử lần nữa nhé.';
     }).catch(function () {
@@ -1249,7 +2781,50 @@ dialog[open]{animation:hien .25s ease-out}
       nut.disabled = false; nut.textContent = 'Ghim lời nhắn';
     });
   });
+
+  /* ---------- Chuyển động: cánh hoa rơi, hiện dần khi cuộn ---------- */
+  if (!giamChuyenDong()) {
+    var khungHoa = $('canh-hoa-roi'), mauHoa = ['#FF8FB1', '#FFD45C', '#B9A7FF', '#A9B99D', '#FFB8CF'];
+    for (var i = 0; i < 14; i++) {
+      var c = document.createElement('i'), s = 8 + Math.random() * 10;
+      c.style.cssText = 'left:' + (Math.random() * 100).toFixed(1) + '%;width:' + s.toFixed(0) + 'px;height:' + s.toFixed(0) + 'px;background:' + mauHoa[i % mauHoa.length] +
+        ';animation-duration:' + (11 + Math.random() * 10).toFixed(1) + 's;animation-delay:' + (-Math.random() * 20).toFixed(1) + 's;--troi-x:' + Math.round(Math.random() * 160 - 80) + 'px';
+      khungHoa.appendChild(c);
+    }
+    // Hiện dần khi cuộn tới. Kiểm tra vị trí theo sự kiện cuộn (đơn giản, chạy được ở mọi trình duyệt).
+    var choHien = Array.prototype.slice.call(document.querySelectorAll('.vung .dau-muc, .the-cam-xuc, .chong-giay, .hop-vuon, .form-tra-cuu, .tra-cuu .minh-hoa, .luoi-rieng-tu li, .tam-biet .hang-nut'));
+    choHien.forEach(function (el) {
+      var cha = el.parentElement;
+      if (cha.classList.contains('luoi-cam-xuc') || cha.classList.contains('luoi-rieng-tu')) {
+        el.style.transitionDelay = (Array.prototype.indexOf.call(cha.children, el) * 70) + 'ms';
+      }
+      el.classList.add('hien-dan');
+    });
+    var henKiem = null;
+    function kiemHien() {
+      henKiem = null;
+      var day = window.innerHeight * 0.94;
+      choHien = choHien.filter(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.top > day) return true; // còn ở dưới, chưa cuộn tới
+        el.classList.add('da-hien');
+        setTimeout(function () { el.classList.remove('hien-dan', 'da-hien'); el.style.transitionDelay = ''; }, 1100 + (parseInt(el.style.transitionDelay, 10) || 0));
+        return false;
+      });
+      if (!choHien.length) { window.removeEventListener('scroll', henKiemHien); window.removeEventListener('resize', henKiemHien); }
+    }
+    function henKiemHien() { if (!henKiem) henKiem = setTimeout(kiemHien, 80); }
+    window.addEventListener('scroll', henKiemHien, { passive: true });
+    window.addEventListener('resize', henKiemHien);
+    kiemHien();
+  }
+
+  /* ---------- Khởi động ---------- */
+  if (phien) hopThu = { thu: [], ghim: [], chuaTai: true };
+  capNhatGiaoDienTk();
+  capNhatThongBao();
   taiBangGhim();
+  if (phien) taiHopThu().catch(boQua);
 })();
 </script>
 </body>
