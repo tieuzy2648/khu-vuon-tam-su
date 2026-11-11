@@ -1556,7 +1556,7 @@ details.mo-rong[open] summary{margin-bottom:12px}
   function boDauViTri(s) {
     var chu = '', vt = [];
     for (var i = 0; i < s.length; i++) {
-      var c = s.charAt(i).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+      var c = s.charAt(i).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
       for (var j = 0; j < c.length; j++) { chu += c.charAt(j); vt.push(i); }
     }
     return { chu: chu, vt: vt };

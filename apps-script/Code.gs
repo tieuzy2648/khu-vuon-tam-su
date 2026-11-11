@@ -513,7 +513,7 @@ function timNguyCo(s) {
 }
 
 function boDauChu(s) {
-  return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
 }
 
 /* ---------------- Tiện ích ---------------- */
